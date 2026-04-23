@@ -1,8 +1,17 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout';
+
 function App() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold">Initial Setup</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<div>Dashboard</div>} />
+          <Route path="/tasks" element={<div>Tasks</div>} />
+          <Route path="/profile" element={<div>Profile</div>} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
