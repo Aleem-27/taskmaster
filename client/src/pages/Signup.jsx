@@ -47,7 +47,7 @@ const Signup = () => {
             />
           </div>
 
-          <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl mt-4 transition-all">
+          <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl mt-4 transition-colors shadow-lg shadow-emerald-200">
             Create Account
           </button>
         </form>
