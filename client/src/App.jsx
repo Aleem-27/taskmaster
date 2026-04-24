@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import TaskList from './pages/TaskList';
+import TaskForm from './pages/TaskForm';
 import Profile from './pages/Profile';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="/tasks" element={<TaskList />} />
+          <Route path="/tasks/new" element={<TaskForm />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
