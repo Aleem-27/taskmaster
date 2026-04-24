@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import TaskList from './pages/TaskList';
 import TaskForm from './pages/TaskForm';
 import Profile from './pages/Profile';
+import TaskDetail from './pages/TaskDetail';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="/tasks" element={<TaskList />} />
           <Route path="/tasks/new" element={<TaskForm />} />
+          <Route path="/tasks/:id" element={<TaskDetail />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
