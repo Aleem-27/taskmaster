@@ -3,6 +3,7 @@ import Layout from './components/Layout';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
+import TaskList from './pages/TaskList';
 import Profile from './pages/Profile';
 
 function App() {
@@ -14,7 +15,7 @@ function App() {
 
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
-          <Route path="/tasks" element={<div>Tasks</div>} />
+          <Route path="/tasks" element={<TaskList />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
