@@ -1,4 +1,4 @@
-import { User, Mail, Shield, LogOut } from 'lucide-react';
+import { User, Mail, Shield, LogOut, Calendar } from 'lucide-react';
 
 const Profile = () => {
   // Moch User Data
@@ -23,7 +23,7 @@ const Profile = () => {
           </div>
           
           <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="flex items-center gap-4 p-4 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-100 dark:border-zinc-800 transition-colors duration-300">
                 <User size={20} className="text-zinc-400" />
                 <div>
@@ -45,6 +45,14 @@ const Profile = () => {
                 <div>
                   <p className="text-xs text-zinc-500 dark:text-zinc-400 uppercase font-bold">Role</p>
                   <p className="text-zinc-800 dark:text-zinc-300 font-medium">{user.role}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 p-4 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-100 dark:border-zinc-800 transition-colors duration-300">
+                <Calendar size={20} className="text-zinc-400" />
+                <div>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 uppercase font-bold">Joined in</p>
+                  <p className="text-zinc-800 dark:text-zinc-300 font-medium">{user.joined}</p>
                 </div>
               </div>
             </div>
