@@ -99,7 +99,7 @@ const TaskList = () => {
                     {task.dueDate}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-300">
+                    <button className="cursor-pointer text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-300">
                       <MoreHorizontal size={20} />
                     </button>
                   </td>
