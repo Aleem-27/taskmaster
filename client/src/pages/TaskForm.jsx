@@ -31,7 +31,7 @@ const TaskForm = () => {
       </button>
 
       <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden transition-colors duration-300">
-        <div className="p-8 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+        <div className="p-8 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 transition-colors duration-300">
           <h2 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100">Create New Task</h2>
           <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-1">Fill in the details below to organize your workflow.</p>
         </div>
@@ -43,7 +43,7 @@ const TaskForm = () => {
             <input 
               type="text" 
               required
-              className="w-full px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
+              className="w-full px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all duration-300 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               placeholder="e.g., Complete Database Migration"
               value={formData.title}
               onChange={(e) => setFormData({...formData, title: e.target.value})}
@@ -55,7 +55,7 @@ const TaskForm = () => {
             <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Description</label>
             <textarea 
               rows="4"
-              className="w-full px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
+              className="w-full px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all duration-300 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               placeholder="Describe the task details..."
               value={formData.description}
               onChange={(e) => setFormData({...formData, description: e.target.value})}
@@ -67,7 +67,7 @@ const TaskForm = () => {
             <div>
               <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Priority</label>
               <select 
-                className="w-full px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-emerald-500 outline-none cursor-pointer"
+                className="w-full px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-emerald-500 outline-none cursor-pointer transition-colors duration-300"
                 value={formData.priority}
                 onChange={(e) => setFormData({...formData, priority: e.target.value})}
               >
@@ -83,7 +83,7 @@ const TaskForm = () => {
               <input 
                 type="date" 
                 required
-                className="w-full px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-emerald-500 outline-none transition-colors duration-300"
                 value={formData.dueDate}
                 onChange={(e) => setFormData({...formData, dueDate: e.target.value})}
               />
@@ -91,11 +91,11 @@ const TaskForm = () => {
           </div>
 
           {/* Form Actions */}
-          <div className="flex items-center justify-end gap-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+          <div className="flex items-center justify-end gap-4 pt-4 border-t border-zinc-100 dark:border-zinc-800 transition-colors duration-300">
             <button 
               type="button"
               onClick={() => navigate('/tasks')}
-              className="px-6 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-semibold hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+              className="px-6 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-semibold hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors duration-300 cursor-pointer"
             >
               Cancel
             </button>
