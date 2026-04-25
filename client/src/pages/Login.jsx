@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
+import ThemeToggle from '../components/ThemeToggle';
 
 const Login = () => {
   const handleSubmit = (e) => {
@@ -10,6 +11,10 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4 transition-colors duration-300">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+      
       <div className="max-w-md w-full bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-800">
         <div className="flex flex-col items-center mb-8">
           <div className="bg-emerald-100 dark:bg-emerald-900/30 p-3 rounded-full mb-4">
