@@ -57,7 +57,7 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="pt-6 border-t border-zinc-100 dark:border-zinc-800">
+            <div className="pt-6 border-t border-zinc-100 dark:border-zinc-800 duration-300 transition-colors">
               <button className="cursor-pointer flex items-center justify-center gap-2 w-full py-3 px-4 bg-red-50 dark:bg-red-900/20 text-red-500 dark:hover:text-zinc-300  font-bold rounded-xl hover:bg-red-100 dark:hover:bg-red-800/90 transition-colors duration-300">
                 <LogOut size={20} />
                 Sign Out from Device
