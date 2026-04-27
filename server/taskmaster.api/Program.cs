@@ -16,6 +16,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowViteApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173") // Your React URL
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,6 +35,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowViteApp");
 
 app.UseHttpsRedirection();
 
