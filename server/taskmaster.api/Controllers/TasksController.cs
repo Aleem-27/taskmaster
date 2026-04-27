@@ -79,7 +79,7 @@ namespace taskmaster.api.Controllers
             }
 
             await _taskService.DeleteTaskAsync(id);
-            return NoContent()
+            return NoContent();
         }
     }
 }
