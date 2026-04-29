@@ -45,6 +45,13 @@ namespace taskmaster.api.Controllers
             return Ok(task);
         }
 
+        // GET: api/Tasks/Stats
+        [HttpGet("Stats")]
+        public async Task<ActionResult<TaskStatsDto>> GetTasksStats()
+        {
+            return Ok(await _taskService.GetTasksStatsAsync());
+        }
+
         // PUT: api/Tasks/id
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTaskItem(int id, TaskDto taskDto)

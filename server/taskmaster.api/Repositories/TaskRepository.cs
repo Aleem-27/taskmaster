@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using taskmaster.api.Data;
+using taskmaster.api.DTOs;
 using taskmaster.api.Models;
 
 namespace taskmaster.api.Repositories
@@ -13,6 +14,16 @@ namespace taskmaster.api.Repositories
         public async Task<IEnumerable<TaskItem>> GetAllAsync() => await _context.Tasks.ToListAsync();
 
         public async Task<TaskItem?> GetByIdAsync(int id) => await _context.Tasks.FindAsync(id);
+
+        public async Task<TaskStatsDto> GetStatsAsync()
+        {
+            return new TaskStatsDto
+            {
+                Completed = await _context.Tasks.CountAsync(t => t.Status == "Completed"),
+                InProgress = await _context.Tasks.CountAsync(t => t.Status == "In Progress"),
+                Pending = await _context.Tasks.CountAsync(t => t.Status == "Pending")
+            };
+        }
 
         public async Task AddAsync(TaskItem task)
         {

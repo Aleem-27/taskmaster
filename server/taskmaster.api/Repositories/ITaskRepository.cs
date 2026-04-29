@@ -1,4 +1,5 @@
-﻿using taskmaster.api.Models;
+﻿using taskmaster.api.DTOs;
+using taskmaster.api.Models;
 
 namespace taskmaster.api.Repositories
 {
@@ -6,6 +7,7 @@ namespace taskmaster.api.Repositories
     {
         Task<IEnumerable<TaskItem>> GetAllAsync();
         Task<TaskItem?> GetByIdAsync(int id);
+        Task<TaskStatsDto> GetStatsAsync();
         Task AddAsync(TaskItem task);
         Task UpdateAsync(TaskItem task);
         Task DeleteAsync(int id);

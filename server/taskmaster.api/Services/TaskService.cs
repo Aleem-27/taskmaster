@@ -38,6 +38,11 @@ namespace taskmaster.api.Services
             };
         }
 
+        public async Task<TaskStatsDto> GetTasksStatsAsync()
+        {
+            return await _repository.GetStatsAsync();
+        }
+
         public async Task<TaskDto> CreateTaskAsync(TaskDto taskDto)
         {
             var task = new TaskItem
