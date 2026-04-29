@@ -1,13 +1,27 @@
 import { Plus, Filter, MoreHorizontal, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import taskService from '../services/taskService';
+import { useEffect, useState } from 'react';
 
 const TaskList = () => {
-  // Mock data to visualize the UI
-  const tasks = [
-    { id: 1, title: 'Fix API Authentication', priority: 'High', status: 'In Progress', dueDate: '2026-04-20' },
-    { id: 2, title: 'Design Database Schema', priority: 'Medium', status: 'Completed', dueDate: '2026-04-15' },
-    { id: 3, title: 'Setup Serilog Logging', priority: 'Low', status: 'Pending', dueDate: '2026-04-22' },
-  ];
+  const [tasks, setTasks] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await taskService.getAll();
+        setTasks(response.data);
+      } catch (error) {
+        console.error("Failed to fetch tasks: ", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchTasks();
+  }, []);
 
   const getPriorityStyle = (priority) => {
     switch (priority) {
@@ -25,6 +39,18 @@ const TaskList = () => {
       default: return <AlertCircle size={16} className="text-zinc-400 dark:text-zinc-500" />;
     }
   };
+
+  const SkeletonTasks = () => {
+    return (
+      <tr className="transition-colors duration-300 group animate-pulse">
+        <td className="px-6 py-4"><div className="h-6 bg-zinc-300 dark:bg-zinc-700 rounded"></div></td>
+        <td className="px-6 py-4"><div className="h-6 bg-zinc-300 dark:bg-zinc-700 rounded"></div></td>
+        <td className="px-6 py-4"><div className="h-6 bg-zinc-300 dark:bg-zinc-700 rounded"></div></td>
+        <td className="px-6 py-4"><div className="h-6 bg-zinc-300 dark:bg-zinc-700 rounded"></div></td>
+        <td className="px-6 py-4"><div className="h-6 bg-zinc-300 dark:bg-zinc-700 rounded"></div></td>
+      </tr>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -44,7 +70,7 @@ const TaskList = () => {
       </div>
 
       {/* Filters Bar */}
-      <div className="flex items-center gap-1 md:gap-4 bg-white dark:bg-zinc-900 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm transition-colors duration-300">
+      <div className="flex flex-wrap items-center gap-2 md:gap-4 bg-white dark:bg-zinc-900 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm transition-colors duration-300">
         <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 text-xs sm:text-sm font-medium mr-2 transition-colors duration-300">
           <Filter size={18} />
           <span>Filter by:</span>
@@ -77,34 +103,46 @@ const TaskList = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
-              {tasks.map((task) => (
-                <tr key={task.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 transition-colors duration-300 group">
-                  <td className="px-6 py-4">
-                    <Link to={`/tasks/${task.id}`} className="font-medium text-xs sm:text-base text-zinc-800 dark:text-zinc-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300">
-                      {task.title}
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
-                      {getStatusIcon(task.status)}
-                      {task.status}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${getPriorityStyle(task.priority)}`}>
-                      {task.priority}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
-                    {task.dueDate}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <button className="cursor-pointer text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-300">
-                      <MoreHorizontal size={20} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {loading ? (
+                <>
+                  <SkeletonTasks />
+                  <SkeletonTasks />
+                  <SkeletonTasks />
+                  <SkeletonTasks />
+                </>
+              ) : (
+                tasks?.length == 0 ? (
+                  <tr><td colSpan="5" className="px-6 py-4 text-center font-medium text-xs sm:text-base text-zinc-800 dark:text-zinc-200">No tasks found.</td></tr>
+                ) : (
+                  tasks?.map((task) => (
+                    <tr key={task.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 transition-colors duration-300 group">
+                      <td className="px-6 py-4">
+                        <Link to={`/tasks/${task.id}`} className="font-medium text-xs sm:text-base text-zinc-800 dark:text-zinc-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300">
+                          {task.title}
+                        </Link>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+                          {getStatusIcon(task.status)}
+                          {task.status}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${getPriorityStyle(task.priority)}`}>
+                          {task.priority}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                        {task.dueDate.replace('T', ' ').slice(0, 16)}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <button className="cursor-pointer text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-300">
+                          <MoreHorizontal size={20} />
+                        </button>
+                      </td>
+                    </tr>
+                  )))
+              )}
             </tbody>
           </table>
         </div>
