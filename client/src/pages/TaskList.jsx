@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 const TaskList = () => {
   const [tasks, setTasks] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTasks = async () => {

@@ -20,7 +20,7 @@ const SkeletonCard = () => (
 
 const Dashboard = () => {
   const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
