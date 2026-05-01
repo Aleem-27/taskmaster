@@ -34,11 +34,11 @@ const Signup = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Email Address</label>
+            <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Username</label>
             <input 
-              type="email" 
+              type="text" 
               className="w-full px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-emerald-500 outline-none transition-all duration-300 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
-              placeholder="name@example.com"
+              placeholder="e.g. johndoe"
               required 
             />
           </div>
