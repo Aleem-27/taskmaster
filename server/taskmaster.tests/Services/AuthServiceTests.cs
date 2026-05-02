@@ -76,13 +76,13 @@ namespace taskmaster.tests.Services
         {
             var user = new User
             {
-                Username = "john",
+                Username = "aleem",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("correct")
             };
 
-            _mockUserRepo.Setup(r => r.GetByUsernameAsync("john")).ReturnsAsync(user);
+            _mockUserRepo.Setup(r => r.GetByUsernameAsync("aleem")).ReturnsAsync(user);
 
-            var result = await _sut.LoginAsync("john", "wrongpassword");
+            var result = await _sut.LoginAsync("aleem", "wrongpassword");
 
             result.Success.Should().BeFalse();
         }
@@ -92,13 +92,13 @@ namespace taskmaster.tests.Services
         {
             var user = new User
             {
-                Username = "john",
+                Username = "aleem",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("correct")
             };
 
-            _mockUserRepo.Setup(r => r.GetByUsernameAsync("john")).ReturnsAsync(user);
+            _mockUserRepo.Setup(r => r.GetByUsernameAsync("aleem")).ReturnsAsync(user);
 
-            var result = await _sut.LoginAsync("john", "correct");
+            var result = await _sut.LoginAsync("aleem", "correct");
 
             result.Success.Should().BeTrue();
             result.AccessToken.Should().NotBeNullOrEmpty();
