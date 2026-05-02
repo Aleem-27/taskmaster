@@ -38,12 +38,12 @@ namespace taskmaster.api.Services
             return true;
         }
 
-        public async Task<(bool Success, string? AccessToken, string? RefreshToken, DateTime? Expiry)> LoginAsync(string username, string password)
+        public async Task<AuthResultDto> LoginAsync(string username, string password)
         { 
             var existingUser = await _userRepository.GetByUsernameAsync(username);
             if (existingUser == null || !BCrypt.Net.BCrypt.Verify(password, existingUser.PasswordHash))
             {
-                return (false, null, null, null);
+                return new AuthResultDto { Success = false };
             }
 
             var accessToken = CreateAccessToken(existingUser);
@@ -55,7 +55,13 @@ namespace taskmaster.api.Services
 
             await _userRepository.UpdateAsync(existingUser);
 
-            return (true, accessToken, refreshToken.Token, refreshToken.Expires);
+            return new AuthResultDto
+            {
+                Success = true,
+                AccessToken = accessToken,
+                RefreshToken = refreshToken.Token,
+                Expiry = refreshToken.Expires
+            };
         }
 
         public string CreateAccessToken(User user)
