@@ -51,6 +51,7 @@ namespace taskmaster.api.Services
 
             existingUser.RefreshToken = refreshToken.Token;
             existingUser.TokenExpires = refreshToken.Expires;
+            existingUser.TokenCreated = DateTime.UtcNow;
 
             await _userRepository.UpdateAsync(existingUser);
 
@@ -65,7 +66,7 @@ namespace taskmaster.api.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value!));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["AppSettings:Token"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var token = new JwtSecurityToken(
