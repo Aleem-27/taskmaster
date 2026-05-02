@@ -12,11 +12,13 @@ namespace taskmaster.api.Services
     {
         private readonly IConfiguration _config;
         private readonly IUserRepository _userRepository;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IConfiguration config, IUserRepository userRepository)
+        public AuthService(IConfiguration config, IUserRepository userRepository, ILogger<AuthService> logger)
         {
             _config = config;
             _userRepository = userRepository;
+            _logger = logger;
         }
 
         public async Task<bool> RegisterAsync(string fullname, string username, string password)
@@ -24,6 +26,7 @@ namespace taskmaster.api.Services
             var existingUser = await _userRepository.GetByUsernameAsync(username);
             if (existingUser != null)
             {
+                _logger.LogWarning("Registeration failed - username '{Username}' is already taken", username);
                 return false;
             }
 
@@ -35,6 +38,8 @@ namespace taskmaster.api.Services
             };
 
             await _userRepository.AddAsync(user);
+
+            _logger.LogInformation("New user registered: '{Username}'", username);
             return true;
         }
 
@@ -43,6 +48,7 @@ namespace taskmaster.api.Services
             var existingUser = await _userRepository.GetByUsernameAsync(username);
             if (existingUser == null || !BCrypt.Net.BCrypt.Verify(password, existingUser.PasswordHash))
             {
+                _logger.LogWarning("Failed login attempt for username '{Username}'", username);
                 return new AuthResultDto { Success = false };
             }
 
@@ -55,6 +61,7 @@ namespace taskmaster.api.Services
 
             await _userRepository.UpdateAsync(existingUser);
 
+            _logger.LogInformation("User '{Username} logged in successfully", username);
             return new AuthResultDto
             {
                 Success = true,

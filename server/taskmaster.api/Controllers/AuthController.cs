@@ -9,10 +9,11 @@ namespace taskmaster.api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-
-        public AuthController(IAuthService authService)
+        private readonly ILogger<AuthService> _logger;
+        public AuthController(IAuthService authService, ILogger<AuthService> logger)
         {
             _authService = authService;
+            _logger = logger;
         }
 
         [HttpPost("Register")]
@@ -49,6 +50,7 @@ namespace taskmaster.api.Controllers
             cookieOptions.Expires = result.Expiry!.Value;
             Response.Cookies.Append("refreshToken", result.RefreshToken!, cookieOptions);
 
+            _logger.LogInformation("Auth cookies issued for user '{Username}'", request.Username);
             return Ok(new { message = "Login successful!" });
         }
     }

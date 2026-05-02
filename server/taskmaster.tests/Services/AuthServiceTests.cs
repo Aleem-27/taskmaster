@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Moq;
 using taskmaster.api.Models;
 using taskmaster.api.Repositories;
@@ -11,6 +12,7 @@ namespace taskmaster.tests.Services
     {
         private readonly Mock<IUserRepository> _mockUserRepo;
         private readonly Mock<IConfiguration> _mockConfig;
+        private readonly Mock<ILogger<AuthService>> _mockLogger;
         private readonly IAuthService _sut;
 
         private const string TestToken = "THIS_IS_A_VERY_LONG_DEVELOPMENT_ONLY_SECRET_KEY_FOR_JWT_TESTING_123456";
@@ -19,11 +21,12 @@ namespace taskmaster.tests.Services
         {
             _mockUserRepo = new Mock<IUserRepository>();
             _mockConfig = new Mock<IConfiguration>();
+            _mockLogger = new Mock<ILogger<AuthService>>();
 
             _mockConfig.Setup(c => c["AppSettings:Token"])
                        .Returns(TestToken);
 
-            _sut = new AuthService(_mockConfig.Object , _mockUserRepo.Object);
+            _sut = new AuthService(_mockConfig.Object , _mockUserRepo.Object, _mockLogger.Object);
         }
 
         [Fact]
