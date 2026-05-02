@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="../taskmaster.tests/taskmaster.tests.csproj" Id="8db0dc07-9ec5-4db6-803b-3f964bc60c2f" />
   <Project Path="taskmaster.api.csproj" />
 </Solution>
