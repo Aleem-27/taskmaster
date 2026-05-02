@@ -11,20 +11,21 @@ namespace taskmaster.api.Services
     public class AuthService : IAuthService
     {
         private readonly IConfiguration _config;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUserRepository _userRepository;
 
-        public AuthService(IConfiguration config, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository)
+        public AuthService(IConfiguration config, IUserRepository userRepository)
         {
             _config = config;
-            _httpContextAccessor = httpContextAccessor;
             _userRepository = userRepository;
         }
 
         public async Task<bool> RegisterAsync(string fullname, string username, string password)
         {
             var existingUser = await _userRepository.GetByUsernameAsync(username);
-            if (existingUser != null) return false;
+            if (existingUser != null)
+            {
+                return false;
+            }
 
             var user = new User
             {
@@ -35,6 +36,25 @@ namespace taskmaster.api.Services
 
             await _userRepository.AddAsync(user);
             return true;
+        }
+
+        public async Task<(bool Success, string? AccessToken, string? RefreshToken, DateTime? Expiry)> LoginAsync(string username, string password)
+        { 
+            var existingUser = await _userRepository.GetByUsernameAsync(username);
+            if (existingUser == null || !BCrypt.Net.BCrypt.Verify(password, existingUser.PasswordHash))
+            {
+                return (false, null, null, null);
+            }
+
+            var accessToken = CreateAccessToken(existingUser);
+            var refreshToken = GenerateRefreshToken();
+
+            existingUser.RefreshToken = refreshToken.Token;
+            existingUser.TokenExpires = refreshToken.Expires;
+
+            await _userRepository.UpdateAsync(existingUser);
+
+            return (true, accessToken, refreshToken.Token, refreshToken.Expires);
         }
 
         public string CreateAccessToken(User user)
@@ -63,23 +83,6 @@ namespace taskmaster.api.Services
                 Token: Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
                 Expires: DateTime.Now.AddDays(7)
             );
-        }
-
-        public void SetTokensInCookies(string accessToken, string refreshToken, DateTime refreshExpiry)
-        {
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTime.Now.AddMinutes(15)
-            };
-
-            var response = _httpContextAccessor.HttpContext?.Response;
-
-            response?.Cookies.Append("accessToken", accessToken, cookieOptions);
-            cookieOptions.Expires = refreshExpiry;
-            response?.Cookies.Append("refreshToken", refreshToken, cookieOptions);
         }
     }
 }

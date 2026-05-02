@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.EntityFrameworkCore;
-using taskmaster.api.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using taskmaster.api.DTOs;
-using taskmaster.api.Models;
 using taskmaster.api.Services;
 
 namespace taskmaster.api.Controllers

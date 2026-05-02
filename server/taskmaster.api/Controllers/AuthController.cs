@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using taskmaster.api.DTOs;
-using taskmaster.api.Repositories;
 using taskmaster.api.Services;
 
 namespace taskmaster.api.Controllers
@@ -11,19 +9,20 @@ namespace taskmaster.api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-        private readonly IUserRepository _userRepository;
 
-        public AuthController(IAuthService authService, IUserRepository userRepository)
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
-            _userRepository = userRepository;
         }
 
         [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterDto request)
         {
             var success = await _authService.RegisterAsync(request.FullName, request.Username, request.Password);
-            if (!success) return BadRequest("Username is already taken");
+            if (!success)
+            {
+                return BadRequest("Username is already taken");
+            }
 
             return Ok(new { message = "Registration Successful!" });
         }
@@ -31,22 +30,24 @@ namespace taskmaster.api.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginDto request)
         {
-            var user = await _userRepository.GetByUsernameAsync(request.Username);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            var result = await _authService.LoginAsync(request.Username, request.Password);
+            if (!result.Success)
             {
-                return BadRequest("Invalid Credentials.");
+                return BadRequest("Invalid username or password");
             }
 
-            // Generate and update new refresh token
-            var accessToken = _authService.CreateAccessToken(user);
-            var refreshToken = _authService.GenerateRefreshToken();
+            // Add both tokens to the cookies
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.Now.AddMinutes(15)
+            };
 
-            user.RefreshToken = refreshToken.Token;
-            user.TokenExpires = refreshToken.Expires;
-            await _userRepository.UpdateAsync(user);
-
-            // Append the tokens to cookies
-            _authService.SetTokensInCookies(accessToken, refreshToken.Token, refreshToken.Expires);
+            Response.Cookies.Append("accessToken", result.AccessToken!, cookieOptions);
+            cookieOptions.Expires = result.Expiry!.Value;
+            Response.Cookies.Append("refreshToken", result.RefreshToken!, cookieOptions);
 
             return Ok(new { message = "Login successful!" });
         }
