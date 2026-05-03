@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using taskmaster.api.DTOs.Tasks;
 using taskmaster.api.Services.Interfaces;
 
@@ -17,7 +18,7 @@ namespace taskmaster.api.Controllers
 
         // GET: api/Tasks
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskDto>>> GetTasks()
+        public async Task<ActionResult<IEnumerable<TaskReadDto>>> GetTasks()
         {
             var tasks = await _taskService.GetAllTasksAsync();
             return Ok(tasks);
@@ -25,7 +26,7 @@ namespace taskmaster.api.Controllers
 
         // GET: api/Tasks/id
         [HttpGet("{id}")]
-        public async Task<ActionResult<TaskDto>> GetTaskItem(int id)
+        public async Task<ActionResult<TaskReadDto>> GetTaskItem(int id)
         {
             var task = await _taskService.GetTaskByIdAsync(id);
             if (task == null)
@@ -45,7 +46,7 @@ namespace taskmaster.api.Controllers
 
         // PUT: api/Tasks/id
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTaskItem(int id, TaskDto taskDto)
+        public async Task<IActionResult> PutTaskItem(int id, TaskUpdateDto taskUpdateDto)
         {
             var existingTask = await _taskService.GetTaskByIdAsync(id);
             if (existingTask == null)
@@ -53,15 +54,17 @@ namespace taskmaster.api.Controllers
                 return NotFound();
             }
 
-            await _taskService.UpdateTaskAsync(id, taskDto);
+            await _taskService.UpdateTaskAsync(id, taskUpdateDto);
             return NoContent();
         }
 
         // POST: api/Tasks
         [HttpPost]
-        public async Task<ActionResult<TaskDto>> PostTaskItem(TaskDto taskDto)
+        public async Task<ActionResult<TaskReadDto>> PostTaskItem(TaskCreateDto taskCreateDto)
         {
-            var createdTask = await _taskService.CreateTaskAsync(taskDto);
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
+
+            var createdTask = await _taskService.CreateTaskAsync(taskCreateDto, userId);
 
             return CreatedAtAction(nameof(GetTaskItem), new { id = createdTask.Id }, createdTask);
         }

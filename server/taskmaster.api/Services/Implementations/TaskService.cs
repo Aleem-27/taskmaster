@@ -11,10 +11,10 @@ namespace taskmaster.api.Services.Implementations
 
         public TaskService(ITaskRepository repository) => _repository = repository;
 
-        public async Task<IEnumerable<TaskDto>> GetAllTasksAsync()
+        public async Task<IEnumerable<TaskReadDto>> GetAllTasksAsync()
         {
             var tasks = await _repository.GetAllAsync();
-            return tasks.Select(t => new TaskDto
+            return tasks.Select(t => new TaskReadDto
             {
                 Id = t.Id,
                 Title = t.Title,
@@ -25,10 +25,10 @@ namespace taskmaster.api.Services.Implementations
             });
         }
 
-        public async Task<TaskDto?> GetTaskByIdAsync(int id)
+        public async Task<TaskReadDto?> GetTaskByIdAsync(int id)
         {
             var t = await _repository.GetByIdAsync(id);
-            return t == null ? null : new TaskDto
+            return t == null ? null : new TaskReadDto
             {
                 Id = t.Id,
                 Title = t.Title,
@@ -39,10 +39,10 @@ namespace taskmaster.api.Services.Implementations
             };
         }
 
-        public async Task<IEnumerable<TaskDto>> GetTasksByUserIdAsync(int userId)
+        public async Task<IEnumerable<TaskReadDto>> GetTasksByUserIdAsync(int userId)
         {
             var tasks = await _repository.GetByUserIdAsync(userId);
-            return tasks.Select(t => new TaskDto
+            return tasks.Select(t => new TaskReadDto
             {
                 Id = t.Id,
                 Title = t.Title,
@@ -58,32 +58,40 @@ namespace taskmaster.api.Services.Implementations
             return await _repository.GetStatsAsync();
         }
 
-        public async Task<TaskDto> CreateTaskAsync(TaskDto taskDto)
+        public async Task<TaskReadDto> CreateTaskAsync(TaskCreateDto taskCreateDto, int userId)
         {
             var task = new TaskItem
             {
-                Title = taskDto.Title,
-                Description = taskDto.Description,
-                Priority = taskDto.Priority,
-                Status = taskDto.Status,
-                DueDate = taskDto.DueDate
+                Title = taskCreateDto.Title,
+                Description = taskCreateDto.Description,
+                Priority = taskCreateDto.Priority,
+                DueDate = taskCreateDto.DueDate,
+                UserId = userId
             };
 
             await _repository.AddAsync(task);
-            taskDto.Id = task.Id;
-            return taskDto;
+
+            return new TaskReadDto
+            {
+                Id = task.Id,
+                Title = task.Title,
+                Description = task.Description,
+                Priority = task.Priority,
+                Status = task.Status,
+                DueDate = task.DueDate
+            };
         }
 
-        public async Task UpdateTaskAsync(int id, TaskDto taskDto)
+        public async Task UpdateTaskAsync(int id, TaskUpdateDto taskUpdateDto)
         {
             var existingTask = await _repository.GetByIdAsync(id);
             if (existingTask == null) return;
 
-            existingTask.Title = taskDto.Title;
-            existingTask.Description = taskDto.Description;
-            existingTask.Priority = taskDto.Priority;
-            existingTask.Status = taskDto.Status;
-            existingTask.DueDate = taskDto.DueDate;
+            existingTask.Title = taskUpdateDto.Title;
+            existingTask.Description = taskUpdateDto.Description;
+            existingTask.Priority = taskUpdateDto.Priority;
+            existingTask.Status = taskUpdateDto.Status;
+            existingTask.DueDate = taskUpdateDto.DueDate;
 
             await _repository.UpdateAsync(existingTask);
         }

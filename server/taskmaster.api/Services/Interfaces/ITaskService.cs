@@ -4,12 +4,12 @@ namespace taskmaster.api.Services.Interfaces
 {
     public interface ITaskService
     {
-        Task<IEnumerable<TaskDto>> GetAllTasksAsync();
-        Task<TaskDto?> GetTaskByIdAsync(int id);
-        Task<IEnumerable<TaskDto>> GetTasksByUserIdAsync(int userId);
+        Task<IEnumerable<TaskReadDto>> GetAllTasksAsync();
+        Task<TaskReadDto?> GetTaskByIdAsync(int id);
+        Task<IEnumerable<TaskReadDto>> GetTasksByUserIdAsync(int userId);
         Task<TaskStatsDto> GetTasksStatsAsync();
-        Task<TaskDto> CreateTaskAsync(TaskDto taskDto);
-        Task UpdateTaskAsync(int id, TaskDto taskDto);
+        Task<TaskReadDto> CreateTaskAsync(TaskCreateDto taskCreateDto, int userId);
+        Task UpdateTaskAsync(int id, TaskUpdateDto taskUpdateDto);
         Task DeleteTaskAsync(int id);
     }
 }
