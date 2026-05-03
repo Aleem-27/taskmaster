@@ -25,9 +25,9 @@ namespace taskmaster.api.Services.Implementations
             });
         }
 
-        public async Task<TaskReadDto?> GetTaskByIdAsync(int id)
+        public async Task<TaskReadDto?> GetTaskByIdAndUserIdAsync(int id, int userId)
         {
-            var t = await _repository.GetByIdAsync(id);
+            var t = await _repository.GetByIdAndUserIdAsync(id, userId);
             return t == null ? null : new TaskReadDto
             {
                 Id = t.Id,
@@ -39,9 +39,9 @@ namespace taskmaster.api.Services.Implementations
             };
         }
 
-        public async Task<IEnumerable<TaskReadDto>> GetTasksByUserIdAsync(int userId)
+        public async Task<IEnumerable<TaskReadDto>> GetAllTasksByUserIdAsync(int userId)
         {
-            var tasks = await _repository.GetByUserIdAsync(userId);
+            var tasks = await _repository.GetAllByUserIdAsync(userId);
             return tasks.Select(t => new TaskReadDto
             {
                 Id = t.Id,
@@ -53,9 +53,14 @@ namespace taskmaster.api.Services.Implementations
             });
         }
 
-        public async Task<TaskStatsDto> GetTasksStatsAsync()
+        public async Task<TaskStatsDto> GetTotalTasksStatsAsync()
         {
-            return await _repository.GetStatsAsync();
+            return await _repository.GetTotalStatsAsync();
+        }
+
+        public async Task<TaskStatsDto> GetTasksStatByUserIdAsync(int userId)
+        {
+            return await _repository.GetStatsByUserIdAsync(userId);
         }
 
         public async Task<TaskReadDto> CreateTaskAsync(TaskCreateDto taskCreateDto, int userId)
@@ -82,9 +87,9 @@ namespace taskmaster.api.Services.Implementations
             };
         }
 
-        public async Task UpdateTaskAsync(int id, TaskUpdateDto taskUpdateDto)
+        public async Task UpdateTaskAsync(int id, TaskUpdateDto taskUpdateDto, int userId)
         {
-            var existingTask = await _repository.GetByIdAsync(id);
+            var existingTask = await _repository.GetByIdAndUserIdAsync(id, userId);
             if (existingTask == null) return;
 
             existingTask.Title = taskUpdateDto.Title;
@@ -93,12 +98,12 @@ namespace taskmaster.api.Services.Implementations
             existingTask.Status = taskUpdateDto.Status;
             existingTask.DueDate = taskUpdateDto.DueDate;
 
-            await _repository.UpdateAsync(existingTask);
+            await _repository.UpdateAsync(existingTask, userId);
         }
 
-        public async Task DeleteTaskAsync(int id)
+        public async Task DeleteTaskAsync(int id, int userId)
         {
-            await _repository.DeleteAsync(id);
+            await _repository.DeleteAsync(id, userId);
         }
     }
 }

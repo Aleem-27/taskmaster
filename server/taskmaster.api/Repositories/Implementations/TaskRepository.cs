@@ -10,25 +10,55 @@ namespace taskmaster.api.Repositories.Implementations
     {
         private readonly AppDbContext _context;
 
-        public TaskRepository(AppDbContext context) => _context = context;
+        public TaskRepository(AppDbContext context) 
+        { 
+            _context = context; 
+        }
 
-        public async Task<IEnumerable<TaskItem>> GetAllAsync() => await _context.Tasks.ToListAsync();
+        public async Task<IEnumerable<TaskItem>> GetAllAsync()
+        {
+            return await _context.Tasks.ToListAsync();
+        }
 
-        public async Task<TaskItem?> GetByIdAsync(int id) => await _context.Tasks.FindAsync(id);
+        public async Task<TaskItem?> GetByIdAndUserIdAsync(int id, int userId)
+        {
+            return await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
+        }
 
-        public async Task<IEnumerable<TaskItem>> GetByUserIdAsync(int userId)
+        public async Task<IEnumerable<TaskItem>> GetAllByUserIdAsync(int userId)
         {
             return await _context.Tasks.Where(t => t.UserId == userId).ToListAsync();
         }
 
-        public async Task<TaskStatsDto> GetStatsAsync()
+        public async Task<TaskStatsDto> GetTotalStatsAsync()
         {
-            return new TaskStatsDto
-            {
-                Completed = await _context.Tasks.CountAsync(t => t.Status == "Completed"),
-                InProgress = await _context.Tasks.CountAsync(t => t.Status == "In Progress"),
-                Pending = await _context.Tasks.CountAsync(t => t.Status == "Pending")
-            };
+            var stats = await _context.Tasks
+                .GroupBy(t => 1)
+                .Select(g => new TaskStatsDto
+                {
+                    Completed = g.Count(t => t.Status == "Completed"),
+                    InProgress = g.Count(t => t.Status == "In Progress"),
+                    Pending = g.Count(t => t.Status == "Pending")
+                })
+                .FirstOrDefaultAsync();
+
+            return stats ?? new TaskStatsDto();
+        }
+
+        public async Task<TaskStatsDto> GetStatsByUserIdAsync(int userId)
+        {
+            var stats = await _context.Tasks
+                .Where(t => t.UserId == userId)
+                .GroupBy(t => 1)
+                .Select(g => new TaskStatsDto
+                {
+                    Completed = g.Count(t => t.Status == "Completed"),
+                    InProgress = g.Count(t => t.Status == "In Progress"),
+                    Pending = g.Count(t => t.Status == "Pending")
+                })
+                .FirstOrDefaultAsync();
+
+            return stats ?? new TaskStatsDto();
         }
 
         public async Task AddAsync(TaskItem task)
@@ -37,15 +67,19 @@ namespace taskmaster.api.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(TaskItem task)
+        public async Task UpdateAsync(TaskItem task, int userId)
         {
-            _context.Tasks.Update(task);
-            await _context.SaveChangesAsync();
+            var t = await GetByIdAndUserIdAsync(task.Id, userId);
+            if (task != null)
+            {
+                _context.Tasks.Update(task);
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, int userId)
         {
-            var task = await GetByIdAsync(id);
+            var task = await GetByIdAndUserIdAsync(id, userId);
             if (task != null)
             {
                 _context.Tasks.Remove(task);

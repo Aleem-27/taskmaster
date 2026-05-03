@@ -6,11 +6,12 @@ namespace taskmaster.api.Repositories.Interfaces
     public interface ITaskRepository
     {
         Task<IEnumerable<TaskItem>> GetAllAsync();
-        Task<TaskItem?> GetByIdAsync(int id);
-        Task<IEnumerable<TaskItem>> GetByUserIdAsync(int userId);
-        Task<TaskStatsDto> GetStatsAsync();
+        Task<TaskItem?> GetByIdAndUserIdAsync(int id, int userId);
+        Task<IEnumerable<TaskItem>> GetAllByUserIdAsync(int userId);
+        Task<TaskStatsDto> GetTotalStatsAsync();
+        Task<TaskStatsDto> GetStatsByUserIdAsync(int userId);
         Task AddAsync(TaskItem task);
-        Task UpdateAsync(TaskItem task);
-        Task DeleteAsync(int id);
+        Task UpdateAsync(TaskItem task, int userId);
+        Task DeleteAsync(int id, int userId);
     }
 }
