@@ -1,7 +1,9 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
+using System.Security.Claims;
 using taskmaster.api.Controllers;
 using taskmaster.api.DTOs;
 using taskmaster.api.Services;
@@ -11,16 +13,30 @@ namespace taskmaster.tests.Controllers
     public class AuthControllerTests
     {
         private readonly Mock<IAuthService> _mockAuthService;
+        private readonly Mock<ILogger<AuthController>> _mockLogger;
         private readonly AuthController _sut;
 
         public AuthControllerTests()
         {
             _mockAuthService = new Mock<IAuthService>();
-            _sut = new AuthController(_mockAuthService.Object);
+            _mockLogger = new Mock<ILogger<AuthController>>();
+            _sut = new AuthController(_mockAuthService.Object, _mockLogger.Object);
 
             _sut.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext()
+            };
+        }
+
+        private void SetAuthenticatedUser(string username)
+        {
+            var claims = new[] { new Claim(ClaimTypes.Name, username) };
+            var identity = new ClaimsIdentity(claims, "TestAuth");
+            var principal = new ClaimsPrincipal(identity);
+
+            _sut.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = principal }
             };
         }
 
@@ -93,6 +109,50 @@ namespace taskmaster.tests.Controllers
 
             result.Should().BeOfType<BadRequestObjectResult>()
                 .Which.StatusCode.Should().Be(400);
+        }
+
+        [Fact]
+        public async Task Logout_ShouldReturn200_AndClearCookies()
+        {
+            SetAuthenticatedUser("aleem");
+
+            _mockAuthService
+                .Setup(s => s.LogoutAsync("aleem"))
+                .Returns(Task.CompletedTask);
+
+            var result = await _sut.Logout();
+
+            result.Should().BeOfType<OkObjectResult>()
+                .Which.StatusCode.Should().Be(200);
+
+            var cookies = _sut.HttpContext.Response.Headers["Set-Cookie"].ToString();
+            cookies.Should().Contain("accessToken");
+            cookies.Should().Contain("refreshToken");
+        }
+
+        [Fact]
+        public async Task Logout_ShouldCallLogoutAsync_WhenUserIsAuthenticated()
+        {
+            SetAuthenticatedUser("john");
+
+            _mockAuthService
+                .Setup(s => s.LogoutAsync("john"))
+                .Returns(Task.CompletedTask);
+
+            await _sut.Logout();
+
+            _mockAuthService.Verify(s => s.LogoutAsync("john"), Times.Once);
+        }
+
+        [Fact]
+        public async Task Logout_ShouldStillReturn200_WhenUserIsNotAuthenticated()
+        {
+            var result = await _sut.Logout();
+
+            result.Should().BeOfType<OkObjectResult>()
+                .Which.StatusCode.Should().Be(200);
+
+            _mockAuthService.Verify(s => s.LogoutAsync(It.IsAny<string>()), Times.Never);
         }
     }
 }

@@ -107,5 +107,40 @@ namespace taskmaster.tests.Services
             result.AccessToken.Should().NotBeNullOrEmpty();
             result.RefreshToken.Should().NotBeNullOrEmpty();
         }
+
+        [Fact]
+        public async Task LogoutAsync_ShouldInvalidateRefreshToken_WhenUserExists()
+        {
+            var user = new User
+            {
+                Username = "aleem",
+                RefreshToken = "some-refresh-token",
+                TokenExpires = DateTime.UtcNow.AddDays(7),
+                TokenCreated = DateTime.UtcNow
+            };
+
+            _mockUserRepo.Setup(r => r.GetByUsernameAsync("aleem")).ReturnsAsync(user);
+            _mockUserRepo.Setup(r => r.UpdateAsync(It.IsAny<User>())).Returns(Task.CompletedTask);
+
+            await _sut.LogoutAsync("aleem");
+
+            _mockUserRepo.Verify(r => r.UpdateAsync(It.Is<User>(u =>
+                u.RefreshToken == null &&
+                u.TokenExpires == null &&
+                u.TokenCreated == null
+            )), Times.Once);
+        }
+
+        [Fact]
+        public async Task LogoutAsync_ShouldDoNothing_WhenUserDoesNotExist()
+        {
+            _mockUserRepo
+                .Setup(r => r.GetByUsernameAsync(It.IsAny<string>()))
+                .ReturnsAsync((User?)null);
+
+            await _sut.LogoutAsync("ghost");
+
+            _mockUserRepo.Verify(r => r.UpdateAsync(It.IsAny<User>()), Times.Never);
+        }
     }
 }
