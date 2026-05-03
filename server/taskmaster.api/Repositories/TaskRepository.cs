@@ -15,6 +15,11 @@ namespace taskmaster.api.Repositories
 
         public async Task<TaskItem?> GetByIdAsync(int id) => await _context.Tasks.FindAsync(id);
 
+        public async Task<IEnumerable<TaskItem>> GetByUserIdAsync(int userId)
+        {
+            return await _context.Tasks.Where(t => t.UserId == userId).ToListAsync();
+        }
+
         public async Task<TaskStatsDto> GetStatsAsync()
         {
             return new TaskStatsDto

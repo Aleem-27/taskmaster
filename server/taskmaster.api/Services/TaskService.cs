@@ -38,6 +38,20 @@ namespace taskmaster.api.Services
             };
         }
 
+        public async Task<IEnumerable<TaskDto>> GetTasksByUserIdAsync(int userId)
+        {
+            var tasks = await _repository.GetByUserIdAsync(userId);
+            return tasks.Select(t => new TaskDto
+            {
+                Id = t.Id,
+                Title = t.Title,
+                Description = t.Description,
+                Priority = t.Priority,
+                Status = t.Status,
+                DueDate = t.DueDate
+            });
+        }
+
         public async Task<TaskStatsDto> GetTasksStatsAsync()
         {
             return await _repository.GetStatsAsync();

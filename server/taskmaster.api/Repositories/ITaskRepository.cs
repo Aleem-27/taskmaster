@@ -7,6 +7,7 @@ namespace taskmaster.api.Repositories
     {
         Task<IEnumerable<TaskItem>> GetAllAsync();
         Task<TaskItem?> GetByIdAsync(int id);
+        Task<IEnumerable<TaskItem>> GetByUserIdAsync(int userId);
         Task<TaskStatsDto> GetStatsAsync();
         Task AddAsync(TaskItem task);
         Task UpdateAsync(TaskItem task);

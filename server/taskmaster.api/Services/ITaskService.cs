@@ -6,6 +6,7 @@ namespace taskmaster.api.Services
     {
         Task<IEnumerable<TaskDto>> GetAllTasksAsync();
         Task<TaskDto?> GetTaskByIdAsync(int id);
+        Task<IEnumerable<TaskDto>> GetTasksByUserIdAsync(int userId);
         Task<TaskStatsDto> GetTasksStatsAsync();
         Task<TaskDto> CreateTaskAsync(TaskDto taskDto);
         Task UpdateTaskAsync(int id, TaskDto taskDto);
