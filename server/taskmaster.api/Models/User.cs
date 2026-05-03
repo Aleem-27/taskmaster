@@ -16,8 +16,8 @@ namespace taskmaster.api.Models
         [Required]
         public string PasswordHash { get; set; } = string.Empty;
 
-        public string RefreshToken { get; set; } = string.Empty;
-        public DateTime TokenCreated { get; set; }
-        public DateTime TokenExpires { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? TokenCreated { get; set; }
+        public DateTime? TokenExpires { get; set; }
     }
 }

@@ -71,6 +71,24 @@ namespace taskmaster.api.Services
             };
         }
 
+        public async Task LogoutAsync(string username)
+        {
+            var user = await _userRepository.GetByUsernameAsync(username);
+            if (user == null)
+            {
+                _logger.LogWarning("Logout attempted for unknown username '{Username}'", username);
+                return;
+            }
+
+            user.RefreshToken = null;
+            user.TokenExpires = null;
+            user.TokenCreated = null;
+
+            await _userRepository.UpdateAsync(user);
+
+            _logger.LogInformation("User '{Username}' logged out, refresh token invalidated", username);
+        }
+
         public string CreateAccessToken(User user)
         {
             var claims = new List<Claim>

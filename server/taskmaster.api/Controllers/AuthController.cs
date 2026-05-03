@@ -9,8 +9,8 @@ namespace taskmaster.api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-        private readonly ILogger<AuthService> _logger;
-        public AuthController(IAuthService authService, ILogger<AuthService> logger)
+        private readonly ILogger<AuthController> _logger;
+        public AuthController(IAuthService authService, ILogger<AuthController> logger)
         {
             _authService = authService;
             _logger = logger;
@@ -42,7 +42,7 @@ namespace taskmaster.api.Controllers
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.Now.AddMinutes(15)
             };
 
@@ -52,6 +52,29 @@ namespace taskmaster.api.Controllers
 
             _logger.LogInformation("Auth cookies issued for user '{Username}'", request.Username);
             return Ok(new { message = "Login successful!" });
+        }
+
+        [HttpPost("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var username = User.Identity?.Name;
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddDays(-1) // expire immediately
+            };
+
+            Response.Cookies.Append("accessToken", "", cookieOptions);
+            Response.Cookies.Append("refreshToken", "", cookieOptions);
+
+            if (!string.IsNullOrEmpty(username))
+                await _authService.LogoutAsync(username);
+
+            _logger.LogInformation("Logout endpoint called, cookies cleared for user '{Username}'", username ?? "unknown");
+            return Ok(new { message = "Logged out successfully" });
         }
     }
 }
