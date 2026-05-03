@@ -1,8 +1,8 @@
 using FluentAssertions;
 using taskmaster.api.Models;
-using taskmaster.api.Repositories;
 using taskmaster.tests.Helpers;
 using taskmaster.api.Data;
+using taskmaster.api.Repositories.Implementations;
 
 namespace taskmaster.tests.Repositories
 {

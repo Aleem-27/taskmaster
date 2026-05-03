@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using taskmaster.api.DTOs;
-using taskmaster.api.Services;
+using taskmaster.api.DTOs.Tasks;
+using taskmaster.api.Services.Interfaces;
 
 namespace taskmaster.api.Controllers
 {

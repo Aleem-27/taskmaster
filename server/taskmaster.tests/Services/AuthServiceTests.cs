@@ -3,8 +3,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using taskmaster.api.Models;
-using taskmaster.api.Repositories;
-using taskmaster.api.Services;
+using taskmaster.api.Repositories.Interfaces;
+using taskmaster.api.Services.Implementations;
+using taskmaster.api.Services.Interfaces;
 
 namespace taskmaster.tests.Services
 {

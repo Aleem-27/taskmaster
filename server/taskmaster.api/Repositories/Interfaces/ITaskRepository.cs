@@ -1,7 +1,7 @@
-﻿using taskmaster.api.DTOs;
+﻿using taskmaster.api.DTOs.Tasks;
 using taskmaster.api.Models;
 
-namespace taskmaster.api.Repositories
+namespace taskmaster.api.Repositories.Interfaces
 {
     public interface ITaskRepository
     {

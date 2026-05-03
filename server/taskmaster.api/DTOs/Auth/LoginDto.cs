@@ -1,4 +1,4 @@
-﻿namespace taskmaster.api.DTOs
+﻿namespace taskmaster.api.DTOs.Auth
 {
     public class LoginDto
     {

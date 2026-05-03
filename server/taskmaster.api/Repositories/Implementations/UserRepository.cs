@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using taskmaster.api.Data;
 using taskmaster.api.Models;
+using taskmaster.api.Repositories.Interfaces;
 
-namespace taskmaster.api.Repositories
+namespace taskmaster.api.Repositories.Implementations
 {
     public class UserRepository : IUserRepository
     {

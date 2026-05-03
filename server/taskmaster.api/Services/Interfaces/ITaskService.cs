@@ -1,6 +1,6 @@
-﻿using taskmaster.api.DTOs;
+﻿using taskmaster.api.DTOs.Tasks;
 
-namespace taskmaster.api.Services
+namespace taskmaster.api.Services.Interfaces
 {
     public interface ITaskService
     {

@@ -6,7 +6,7 @@ using Moq;
 using System.Security.Claims;
 using taskmaster.api.Controllers;
 using taskmaster.api.DTOs;
-using taskmaster.api.Services;
+using taskmaster.api.Services.Interfaces;
 
 namespace taskmaster.tests.Controllers
 {

@@ -1,6 +1,6 @@
 ﻿using taskmaster.api.Models;
 
-namespace taskmaster.api.Services
+namespace taskmaster.api.Services.Interfaces
 {
     public interface IAuthService
     {

@@ -1,6 +1,6 @@
 ﻿using taskmaster.api.Models;
 
-namespace taskmaster.api.Repositories
+namespace taskmaster.api.Repositories.Interfaces
 {
     public interface IUserRepository
     {

@@ -4,9 +4,10 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using taskmaster.api.Models;
-using taskmaster.api.Repositories;
+using taskmaster.api.Repositories.Interfaces;
+using taskmaster.api.Services.Interfaces;
 
-namespace taskmaster.api.Services
+namespace taskmaster.api.Services.Implementations
 {
     public class AuthService : IAuthService
     {

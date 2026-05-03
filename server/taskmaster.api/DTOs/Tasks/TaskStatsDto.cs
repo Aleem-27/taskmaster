@@ -1,6 +1,6 @@
 ﻿using Microsoft.Identity.Client;
 
-namespace taskmaster.api.DTOs
+namespace taskmaster.api.DTOs.Tasks
 {
     public class TaskStatsDto
     {

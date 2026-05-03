@@ -4,8 +4,10 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
 using taskmaster.api.Data;
-using taskmaster.api.Repositories;
-using taskmaster.api.Services;
+using taskmaster.api.Repositories.Implementations;
+using taskmaster.api.Repositories.Interfaces;
+using taskmaster.api.Services.Implementations;
+using taskmaster.api.Services.Interfaces;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()

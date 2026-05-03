@@ -1,8 +1,9 @@
-﻿using taskmaster.api.DTOs;
+﻿using taskmaster.api.DTOs.Tasks;
 using taskmaster.api.Models;
-using taskmaster.api.Repositories;
+using taskmaster.api.Repositories.Interfaces;
+using taskmaster.api.Services.Interfaces;
 
-namespace taskmaster.api.Services
+namespace taskmaster.api.Services.Implementations
 {
     public class TaskService : ITaskService
     {
