@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using taskmaster.api.DTOs.Auth;
 using taskmaster.api.Services.Interfaces;
 
 namespace taskmaster.api.Controllers
-{
+{ 
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -54,6 +55,7 @@ namespace taskmaster.api.Controllers
             return Ok(new { message = "Login successful!" });
         }
 
+        [Authorize]
         [HttpPost("Logout")]
         public async Task<IActionResult> Logout()
         {
@@ -75,6 +77,22 @@ namespace taskmaster.api.Controllers
 
             _logger.LogInformation("Logout endpoint called, cookies cleared for user '{Username}'", username ?? "unknown");
             return Ok(new { message = "Logged out successfully" });
+        }
+
+        [Authorize]
+        [HttpGet("Profile")]
+        public async Task<IActionResult> GetMyProfile()
+        {
+            var username = User.Identity?.Name;
+            if (string.IsNullOrEmpty(username))
+            {
+                return Unauthorized();
+            }
+
+            var profile = await _authService.GetProfileAsync(username);
+            if (profile == null) return NotFound();
+
+            return Ok(profile);
         }
     }
 }

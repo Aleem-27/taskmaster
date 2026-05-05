@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using taskmaster.api.DTOs.Users;
 using taskmaster.api.Models;
 using taskmaster.api.Repositories.Interfaces;
 using taskmaster.api.Services.Interfaces;
@@ -88,6 +89,24 @@ namespace taskmaster.api.Services.Implementations
             await _userRepository.UpdateAsync(user);
 
             _logger.LogInformation("User '{Username}' logged out, refresh token invalidated", username);
+        }
+
+        public async Task<UserProfileDto?> GetProfileAsync(string username)
+        {
+            var user = await _userRepository.GetByUsernameAsync(username);
+            if (user == null)
+            {
+                return null;
+            }
+
+            return new UserProfileDto
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Username = user.Username,
+                Role = user.Role,
+                JoinDate = user.JoinDate,
+            };
         }
 
         public string CreateAccessToken(User user)
