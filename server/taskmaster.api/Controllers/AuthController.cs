@@ -86,6 +86,7 @@ namespace taskmaster.api.Controllers
             var username = User.Identity?.Name;
             if (string.IsNullOrEmpty(username))
             {
+                _logger.LogWarning("Profile request received with no identity");
                 return Unauthorized();
             }
 

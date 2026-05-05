@@ -11,10 +11,12 @@ namespace taskmaster.api.Controllers
     public class TasksController : ControllerBase
     {
         private readonly ITaskService _taskService;
+        private readonly ILogger<TasksController> _logger;
 
-        public TasksController(ITaskService taskService)
+        public TasksController(ITaskService taskService, ILogger<TasksController> logger)
         {
             _taskService = taskService;
+            _logger = logger;
         }
 
         private int UserId => int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
@@ -33,6 +35,7 @@ namespace taskmaster.api.Controllers
             var task = await _taskService.GetTaskByIdAndUserIdAsync(id, UserId);
             if (task == null)
             {
+                _logger.LogWarning("Task {TaskId} not found for user {UserId}", id, UserId);
                 return NotFound(new { message = $"Task with ID {id} not found." });
             }
 
@@ -51,6 +54,7 @@ namespace taskmaster.api.Controllers
         public async Task<ActionResult<TaskReadDto>> CreateMyTask(TaskCreateDto taskCreateDto)
         {
             var createdTask = await _taskService.CreateTaskAsync(taskCreateDto, UserId);
+            _logger.LogInformation("Task {TaskId} created by user {UserId}", createdTask.Id, UserId);
             return CreatedAtAction(nameof(GetMyTask), new { id = createdTask.Id }, createdTask);
         }
 
@@ -61,10 +65,12 @@ namespace taskmaster.api.Controllers
             var existingTask = await _taskService.GetTaskByIdAndUserIdAsync(id, UserId);
             if (existingTask == null)
             {
+                _logger.LogWarning("Update failed — task {TaskId} not found for user {UserId}", id, UserId);
                 return NotFound();
             }
 
             await _taskService.UpdateTaskAsync(id, taskUpdateDto, UserId);
+            _logger.LogInformation("Task {TaskId} updated by user {UserId}", id, UserId);
             return NoContent();
         }
 
@@ -75,10 +81,12 @@ namespace taskmaster.api.Controllers
             var existingTask = await _taskService.GetTaskByIdAndUserIdAsync(id, UserId);
             if (existingTask == null)
             {
+                _logger.LogWarning("Delete failed — task {TaskId} not found for user {UserId}", id, UserId);
                 return NotFound();
             }
 
             await _taskService.DeleteTaskAsync(id, UserId);
+            _logger.LogInformation("Task {TaskId} deleted by user {UserId}", id, UserId);
             return NoContent();
         }
 
@@ -101,6 +109,7 @@ namespace taskmaster.api.Controllers
         public async Task<IActionResult> AdminDeleteTask(int id)
         {
             await _taskService.AdminDeleteTaskAsync(id);
+            _logger.LogInformation("An Admin deleted task {TaskId}", id);
             return NoContent();
         }
     }

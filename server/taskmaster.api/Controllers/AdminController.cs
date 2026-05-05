@@ -11,10 +11,12 @@ namespace taskmaster.api.Controllers
     public class AdminController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly ILogger<AdminController> _logger;
 
-        public AdminController(IUserRepository userRepository)
+        public AdminController(IUserRepository userRepository, ILogger<AdminController> logger)
         {
             _userRepository = userRepository;
+            _logger = logger;
         }
 
         // GET api/admin/users
@@ -39,15 +41,25 @@ namespace taskmaster.api.Controllers
         public async Task<IActionResult> UpdateUserRole(int id, UserRoleUpdateDto request)
         {
             if (request.Role != "User" && request.Role != "Admin")
+            {
+                _logger.LogWarning("Invalid role '{Role}' specified for user {UserId}", request.Role, id);
                 return BadRequest("Invalid role. Must be 'User' or 'Admin'");
+            }
 
             var user = await _userRepository.GetByIdAsync(id);
-            if (user is null) return NotFound();
+
+            if (user is null)
+            {
+                _logger.LogWarning("Role update failed — user {UserId} not found", id);
+                return NotFound();
+            }
 
             var previousRole = user.Role;
             user.Role = request.Role;
 
             await _userRepository.UpdateAsync(user);
+            _logger.LogInformation("User '{Username}' role changed from '{PreviousRole}' to '{NewRole}'",
+                user.Username, previousRole, request.Role);
             return NoContent();
         }
 
@@ -56,9 +68,14 @@ namespace taskmaster.api.Controllers
         public async Task<IActionResult> DeleteUser(int id)
         {
             var user = await _userRepository.GetByIdAsync(id);
-            if (user is null) return NotFound();
+            if (user is null)
+            {
+                _logger.LogWarning("Delete failed — user {UserId} not found", id);
+                return NotFound();
+            }
 
             await _userRepository.DeleteAsync(id);
+            _logger.LogInformation("An Admin deleted user '{Username}' (Id: {UserId})", user.Username, id);
             return NoContent();
         }
     }

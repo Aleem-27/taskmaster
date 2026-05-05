@@ -96,9 +96,11 @@ namespace taskmaster.api.Services.Implementations
             var user = await _userRepository.GetByUsernameAsync(username);
             if (user == null)
             {
+                _logger.LogWarning("Profile request failed — user '{Username}' not found", username);
                 return null;
             }
 
+            _logger.LogInformation("Profile retrieved for user '{Username}'", username);
             return new UserProfileDto
             {
                 Id = user.Id,
