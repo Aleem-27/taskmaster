@@ -143,5 +143,40 @@ namespace taskmaster.tests.Services
 
             _mockUserRepo.Verify(r => r.UpdateAsync(It.IsAny<User>()), Times.Never);
         }
+
+        [Fact]
+        public async Task GetProfileAsync_ShouldReturnProfile_WhenUserExists()
+        {
+            var user = new User
+            {
+                Id = 1,
+                FullName = "Aleem Khan",
+                Username = "aleem",
+                Role = "User",
+                JoinDate = new DateTime(2024, 1, 1)
+            };
+
+            _mockUserRepo.Setup(r => r.GetByUsernameAsync("aleem")).ReturnsAsync(user);
+
+            var result = await _sut.GetProfileAsync("aleem");
+
+            result.Should().NotBeNull();
+            result!.FullName.Should().Be("Aleem Khan");
+            result.Username.Should().Be("aleem");
+            result.Role.Should().Be("User");
+            result.JoinDate.Should().Be(new DateTime(2024, 1, 1));
+        }
+
+        [Fact]
+        public async Task GetProfileAsync_ShouldReturnNull_WhenUserDoesNotExist()
+        {
+            _mockUserRepo
+                .Setup(r => r.GetByUsernameAsync(It.IsAny<string>()))
+                .ReturnsAsync((User?)null);
+
+            var result = await _sut.GetProfileAsync("ghost");
+
+            result.Should().BeNull();
+        }
     }
 }

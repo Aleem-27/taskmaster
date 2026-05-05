@@ -5,7 +5,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System.Security.Claims;
 using taskmaster.api.Controllers;
-using taskmaster.api.DTOs;
+using taskmaster.api.DTOs.Auth;
+using taskmaster.api.DTOs.Users;
 using taskmaster.api.Services.Interfaces;
 
 namespace taskmaster.tests.Controllers
@@ -153,6 +154,50 @@ namespace taskmaster.tests.Controllers
                 .Which.StatusCode.Should().Be(200);
 
             _mockAuthService.Verify(s => s.LogoutAsync(It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task GetMyProfile_ShouldReturn200_WhenUserIsAuthenticated()
+        {
+            SetAuthenticatedUser("aleem");
+
+            _mockAuthService
+                .Setup(s => s.GetProfileAsync("aleem"))
+                .ReturnsAsync(new UserProfileDto
+                {
+                    Id = 1,
+                    FullName = "Aleem Khan",
+                    Username = "aleem",
+                    Role = "User",
+                    JoinDate = new DateTime(2024, 1, 1)
+                });
+
+            var result = await _sut.GetMyProfile();
+
+            result.Should().BeOfType<OkObjectResult>()
+                .Which.StatusCode.Should().Be(200);
+        }
+
+        [Fact]
+        public async Task GetMyProfile_ShouldReturn401_WhenUsernameIsNotInIdentity()
+        {
+            var result = await _sut.GetMyProfile();
+
+            result.Should().BeOfType<UnauthorizedResult>();
+        }
+
+        [Fact]
+        public async Task GetMyProfile_ShouldReturn404_WhenProfileNotFound()
+        {
+            SetAuthenticatedUser("aleem");
+
+            _mockAuthService
+                .Setup(s => s.GetProfileAsync("aleem"))
+                .ReturnsAsync((UserProfileDto?)null);
+
+            var result = await _sut.GetMyProfile();
+
+            result.Should().BeOfType<NotFoundResult>();
         }
     }
 }
