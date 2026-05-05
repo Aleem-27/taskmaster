@@ -17,6 +17,7 @@ namespace taskmaster.api.Models
         public string PasswordHash { get; set; } = string.Empty;
 
         public string Role { get; set; } = "User";
+        public DateTime JoinDate { get; set;  } = DateTime.Now;
 
         public string? RefreshToken { get; set; }
         public DateTime? TokenCreated { get; set; }
