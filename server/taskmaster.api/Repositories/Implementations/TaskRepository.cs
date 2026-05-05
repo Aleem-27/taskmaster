@@ -86,5 +86,15 @@ namespace taskmaster.api.Repositories.Implementations
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task DeleteAsync(int id)
+        {
+            var task = await _context.Tasks.FindAsync(id);
+            if (task != null)
+            {
+                _context.Tasks.Remove(task);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

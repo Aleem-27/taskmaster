@@ -12,5 +12,6 @@ namespace taskmaster.api.Services.Interfaces
         Task<TaskReadDto> CreateTaskAsync(TaskCreateDto taskCreateDto, int userId);
         Task UpdateTaskAsync(int id, TaskUpdateDto taskUpdateDto, int userId);
         Task DeleteTaskAsync(int id, int userId);
+        Task AdminDeleteTaskAsync(int id);
     }
 }

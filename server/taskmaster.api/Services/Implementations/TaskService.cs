@@ -105,5 +105,10 @@ namespace taskmaster.api.Services.Implementations
         {
             await _repository.DeleteAsync(id, userId);
         }
+
+        public async Task AdminDeleteTaskAsync(int id)
+        { 
+            await _repository.DeleteAsync(id);
+        }
     }
 }

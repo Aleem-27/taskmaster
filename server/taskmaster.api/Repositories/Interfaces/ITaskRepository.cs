@@ -13,5 +13,6 @@ namespace taskmaster.api.Repositories.Interfaces
         Task AddAsync(TaskItem task);
         Task UpdateAsync(TaskItem task, int userId);
         Task DeleteAsync(int id, int userId);
+        Task DeleteAsync (int id);
     }
 }
