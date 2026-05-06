@@ -97,7 +97,7 @@ const Layout = () => {
             className="cursor-pointer flex items-center gap-3 w-full p-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-60"
           >
             <LogOut size={20} />
-            {loading ? 'Signing out...' : 'Logout'}
+            {loading ? 'Signing out...' : 'Sign out'}
           </button>
         </div>
       </aside>

@@ -1,13 +1,10 @@
-import { User, Mail, Shield, LogOut, Calendar } from 'lucide-react';
+import { User, UserCircle, Shield, LogOut, Calendar } from 'lucide-react';
+import { useAuthContext } from '../context/AuthContext';
+import useAuth from '../hooks/useAuth';
 
 const Profile = () => {
-  // Moch User Data
-  const user = {
-    name: "Aleem Ullah Khan",
-    email: "aleem@example.com",
-    role: "Regular User", 
-    joined: "March 2026"
-  };
+  const { user } = useAuthContext();
+  const { logout, loading } = useAuth();
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -28,15 +25,15 @@ const Profile = () => {
                 <User size={20} className="text-zinc-400" />
                 <div>
                   <p className="text-xs text-zinc-500 dark:text-zinc-400 uppercase font-bold">Full Name</p>
-                  <p className="text-zinc-800 dark:text-zinc-300 font-medium">{user.name}</p>
+                  <p className="text-zinc-800 dark:text-zinc-300 font-medium">{user.fullName}</p>
                 </div>
               </div>
               
               <div className="flex items-center gap-4 p-4 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-100 dark:border-zinc-800 transition-colors duration-300">
-                <Mail size={20} className="text-zinc-400 flex shrink-0" />
+                <UserCircle size={20} className="text-zinc-400 flex shrink-0" />
                 <div>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400 uppercase font-bold">Email</p>
-                  <p className="text-zinc-800 dark:text-zinc-300 font-medium">{user.email}</p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 uppercase font-bold">Username</p>
+                  <p className="text-zinc-800 dark:text-zinc-300 font-medium">{user.username}</p>
                 </div>
               </div>
 
@@ -52,15 +49,18 @@ const Profile = () => {
                 <Calendar size={20} className="text-zinc-400" />
                 <div>
                   <p className="text-xs text-zinc-500 dark:text-zinc-400 uppercase font-bold">Joined in</p>
-                  <p className="text-zinc-800 dark:text-zinc-300 font-medium">{user.joined}</p>
+                  <p className="text-zinc-800 dark:text-zinc-300 font-medium">{new Date(user.joinDate).toLocaleDateString("en-GB")}</p>
                 </div>
               </div>
             </div>
 
             <div className="pt-6 border-t border-zinc-100 dark:border-zinc-800 duration-300 transition-colors">
-              <button className="cursor-pointer flex items-center justify-center gap-2 w-full py-3 px-4 bg-red-50 dark:bg-red-900/20 text-red-500 dark:hover:text-zinc-300  font-bold rounded-xl hover:bg-red-100 dark:hover:bg-red-800/90 transition-colors duration-300">
+              <button 
+                onClick={logout}
+                disabled={loading}
+                className="cursor-pointer flex items-center justify-center gap-2 w-full py-3 px-4 bg-red-50 dark:bg-red-900/20 text-red-500 dark:hover:text-zinc-300  font-bold rounded-xl hover:bg-red-100 dark:hover:bg-red-800/90 transition-colors duration-300">
                 <LogOut size={20} />
-                Sign Out from Device
+                {loading ? 'Signing out...' : 'Sign Out From Device'}
               </button>
             </div>
           </div>
