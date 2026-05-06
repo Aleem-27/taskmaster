@@ -43,7 +43,7 @@ namespace taskmaster.api.Controllers
         }
 
         // GET: api/Tasks/Stats
-        [HttpGet("Stats")]
+        [HttpGet("stats")]
         public async Task<ActionResult<TaskStatsDto>> GetMyStats()
         {
             return Ok(await _taskService.GetTasksStatByUserIdAsync(UserId));
@@ -90,21 +90,21 @@ namespace taskmaster.api.Controllers
             return NoContent();
         }
 
-        [HttpGet("Admin/All")]
+        [HttpGet("admin/all")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<TaskReadDto>>> GetAllTasks()
         {
             return Ok(await _taskService.GetAllTasksAsync());
         }
 
-        [HttpGet("Admin/Stats")]
+        [HttpGet("admin/stats")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<TaskStatsDto>> GetTotalStats()
         {
             return Ok(await _taskService.GetTotalTasksStatsAsync());
         }
 
-        [HttpDelete("Admin/{id}")]
+        [HttpDelete("admin/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AdminDeleteTask(int id)
         {

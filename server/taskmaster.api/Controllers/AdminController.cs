@@ -20,7 +20,7 @@ namespace taskmaster.api.Controllers
         }
 
         // GET api/admin/users
-        [HttpGet("Users")]
+        [HttpGet("users")]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _userRepository.GetAllAsync();
@@ -37,7 +37,7 @@ namespace taskmaster.api.Controllers
         }
 
         // PUT api/admin/users/{id}/role
-        [HttpPut("Users/{id}/role")]
+        [HttpPut("users/{id}/role")]
         public async Task<IActionResult> UpdateUserRole(int id, UserRoleUpdateDto request)
         {
             if (request.Role != "User" && request.Role != "Admin")
@@ -64,7 +64,7 @@ namespace taskmaster.api.Controllers
         }
 
         // DELETE api/admin/users/{id}
-        [HttpDelete("Users/{id}")]
+        [HttpDelete("users/{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var user = await _userRepository.GetByIdAsync(id);

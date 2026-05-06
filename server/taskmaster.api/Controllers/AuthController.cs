@@ -17,7 +17,7 @@ namespace taskmaster.api.Controllers
             _logger = logger;
         }
 
-        [HttpPost("Register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto request)
         {
             var success = await _authService.RegisterAsync(request.FullName, request.Username, request.Password);
@@ -29,7 +29,7 @@ namespace taskmaster.api.Controllers
             return Ok(new { message = "Registration Successful!" });
         }
 
-        [HttpPost("Login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto request)
         {
             var result = await _authService.LoginAsync(request.Username, request.Password);
@@ -63,7 +63,7 @@ namespace taskmaster.api.Controllers
         }
 
         [Authorize]
-        [HttpPost("Logout")]
+        [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             var username = User.Identity?.Name;
@@ -86,7 +86,7 @@ namespace taskmaster.api.Controllers
             return Ok(new { message = "Logged out successfully" });
         }
 
-        [HttpPost("Refresh")]
+        [HttpPost("refresh")]
         public async Task<IActionResult> Refresh()
         {
             var refreshToken = Request.Cookies["refreshToken"];
@@ -141,7 +141,7 @@ namespace taskmaster.api.Controllers
         }
 
         [Authorize]
-        [HttpGet("Profile")]
+        [HttpGet("profile")]
         public async Task<IActionResult> GetMyProfile()
         {
             var username = User.Identity?.Name;
