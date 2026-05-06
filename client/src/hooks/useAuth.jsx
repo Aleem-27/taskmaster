@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services';
 import { useAuthContext } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 
 const useAuth = () => {
   const [loading, setLoading] = useState(false);
@@ -29,6 +30,7 @@ const useAuth = () => {
     setError(null);
     try {
       await authService.register(fullName, username, password);
+      toast.success("You've registered successfully! Log in to your account now.");
       navigate('/login');
     } catch (err) {
       setError(err.response?.data?.message || err.response?.data || 'Registration failed');
@@ -38,11 +40,15 @@ const useAuth = () => {
   };
 
   const logout = async () => {
+    setLoading(true);
+    setError(null);
     try {
       await authService.logout();
+    } catch (err) {
+      setError(err.response?.data?.message || err.response?.data || 'Logout failed');
     } finally {
-      // Always clear session even if the API call fails
       clearSession();
+      setLoading(false);
       navigate('/login');
     }
   };

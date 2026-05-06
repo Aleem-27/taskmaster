@@ -1,10 +1,23 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { LayoutDashboard, ClipboardList, User, LogOut, CheckCircle, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import useAuth from '../hooks/useAuth';
+import { useAuthContext } from '../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
 
 const Layout = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { logout, loading } = useAuth();
+  const { user } = useAuthContext();
+  const getInitials = (name) => {
+    if (!name) return 'U';
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   return (
     <div className="flex h-screen bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300">
@@ -78,8 +91,13 @@ const Layout = () => {
         </nav>
 
         <div className="p-4 border-t border-zinc-300 dark:border-zinc-800 transition-colors duration-300">
-          <button className="cursor-pointer flex items-center gap-3 w-full p-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
-            <LogOut size={20} /> Logout
+          <button
+            onClick={logout}
+            disabled={loading}
+            className="cursor-pointer flex items-center gap-3 w-full p-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-60"
+          >
+            <LogOut size={20} />
+            {loading ? 'Signing out...' : 'Logout'}
           </button>
         </div>
       </aside>
@@ -91,11 +109,22 @@ const Layout = () => {
             <Menu size={20} />
           </button>
 
-          <div className="flex items-center gap-4 text-md font-medium text-zinc-600 dark:text-zinc-300 ml-auto transition-colors duration-300">
+          <div className="flex items-center gap-4 ml-auto">
             <ThemeToggle />
-            <span>
-              Welcome, User
-            </span>
+
+            {user && (
+              <div className="flex items-center gap-3">
+                {/* Avatar */}
+                <div className="w-9 h-9 rounded-full bg-emerald-600 dark:bg-emerald-900 text-white flex items-center justify-center font-semibold transition-colors duration-300">
+                  {getInitials(user.fullName || user.username)}
+                </div>
+
+                {/* Name */}
+                <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  {user.fullName || user.username}
+                </span>
+              </div>
+            )}
           </div>
         </header>
 

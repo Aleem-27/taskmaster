@@ -1,20 +1,25 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
+import useAuth from '../hooks/useAuth';
 
 const Login = () => {
-  const handleSubmit = (e) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const { login, loading, error } = useAuth();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Backend logic for authentication 
-    console.log("Login attempted");
-  }
+    await login(username, password);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4 transition-colors duration-300">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
-      
+
       <div className="max-w-md w-full bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-800 transition-colors duration-300">
         <div className="flex flex-col items-center mb-8">
           <div className="bg-emerald-100 dark:bg-emerald-900/30 p-3 rounded-full mb-4 transition-colors duration-300">
@@ -24,28 +29,42 @@ const Login = () => {
           <p className="text-zinc-500 dark:text-zinc-400 mt-2">Log in to manage your tasks</p>
         </div>
 
+        {error && (
+          <div className="mb-4 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm">
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Username</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all duration-300 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               placeholder="e.g. johndoe"
-              required 
+              required
             />
           </div>
           <div>
             <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Password</label>
-            <input 
-              type="password" 
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all duration-300 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               placeholder="••••••••"
-              required 
+              required
             />
           </div>
-          
-          <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition-colors shadow-lg shadow-emerald-200 dark:shadow-none cursor-pointer">
-            Sign In
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-colors shadow-lg shadow-emerald-200 dark:shadow-none cursor-pointer"
+          >
+            {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
