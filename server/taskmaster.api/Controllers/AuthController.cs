@@ -44,7 +44,7 @@ namespace taskmaster.api.Controllers
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Expires = DateTime.Now.AddMinutes(15)
+                Expires = DateTime.UtcNow.AddMinutes(15)
             };
 
             Response.Cookies.Append("accessToken", result.AccessToken!, cookieOptions);

@@ -63,7 +63,7 @@ namespace taskmaster.api.Services.Implementations
 
             await _userRepository.UpdateAsync(existingUser);
 
-            _logger.LogInformation("User '{Username} logged in successfully", username);
+            _logger.LogInformation("User '{Username}' logged in successfully", username);
             return new AuthResultDto
             {
                 Success = true,
@@ -125,7 +125,7 @@ namespace taskmaster.api.Services.Implementations
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(15),
+                expires: DateTime.UtcNow.AddMinutes(15),
                 signingCredentials: creds
             );
 
@@ -136,7 +136,7 @@ namespace taskmaster.api.Services.Implementations
         {
             return (
                 Token: Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires: DateTime.Now.AddDays(7)
+                Expires: DateTime.UtcNow.AddDays(7)
             );
         }
     }
