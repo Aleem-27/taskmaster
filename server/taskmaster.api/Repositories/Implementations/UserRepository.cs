@@ -23,6 +23,11 @@ namespace taskmaster.api.Repositories.Implementations
             return await _context.Users.FindAsync(id);
         }
 
+        public async Task<User?> GetByRefreshTokenAsync(string refreshToken)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+        }
+
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _context.Users.ToListAsync();

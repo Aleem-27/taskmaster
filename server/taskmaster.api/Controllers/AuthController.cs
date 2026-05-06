@@ -39,7 +39,7 @@ namespace taskmaster.api.Controllers
             }
 
             // Add both tokens to the cookies
-            var cookieOptions = new CookieOptions
+            var accessCookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
@@ -47,9 +47,16 @@ namespace taskmaster.api.Controllers
                 Expires = DateTime.UtcNow.AddMinutes(15)
             };
 
-            Response.Cookies.Append("accessToken", result.AccessToken!, cookieOptions);
-            cookieOptions.Expires = result.Expiry!.Value;
-            Response.Cookies.Append("refreshToken", result.RefreshToken!, cookieOptions);
+            var refreshCookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = result.Expiry!.Value
+            };
+
+            Response.Cookies.Append("accessToken", result.AccessToken!, accessCookieOptions);
+            Response.Cookies.Append("refreshToken", result.RefreshToken!, refreshCookieOptions);
 
             _logger.LogInformation("Auth cookies issued for user '{Username}'", request.Username);
             return Ok(new { message = "Login successful!" });
@@ -77,6 +84,60 @@ namespace taskmaster.api.Controllers
 
             _logger.LogInformation("Logout endpoint called, cookies cleared for user '{Username}'", username ?? "unknown");
             return Ok(new { message = "Logged out successfully" });
+        }
+
+        [HttpPost("Refresh")]
+        public async Task<IActionResult> Refresh()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                _logger.LogWarning("Refresh attempt with no refresh token cookie");
+                return Unauthorized(new { message = "No refresh token provided" });
+            }
+
+            var result = await _authService.RefreshTokenAsync(refreshToken);
+
+            if (!result.Success)
+            {
+                // Clear cookies - token is invalid or expired, force re-login
+                var expiredOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTime.UtcNow.AddDays(-1)
+                };
+
+                Response.Cookies.Append("accessToken", "", expiredOptions);
+                Response.Cookies.Append("refreshToken", "", expiredOptions);
+
+                return Unauthorized(new { message = "Invalid or expired refresh token" });
+            }
+
+            // Release both cookies with rotated tokens
+            var accessCookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddMinutes(15)
+            };
+
+            var refreshCookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = result.Expiry!.Value
+            };
+
+            Response.Cookies.Append("accessToken", result.AccessToken!, accessCookieOptions);
+            Response.Cookies.Append("refreshToken", result.RefreshToken!, refreshCookieOptions);
+
+            _logger.LogInformation("Access token refreshed and new cookies issued");
+            return Ok(new { message = "Token refreshed successfully" });
         }
 
         [Authorize]

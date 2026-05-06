@@ -91,6 +91,50 @@ namespace taskmaster.api.Services.Implementations
             _logger.LogInformation("User '{Username}' logged out, refresh token invalidated", username);
         }
 
+        public async Task<AuthResultDto> RefreshTokenAsync(string refreshToken)
+        {
+            var user = await _userRepository.GetByRefreshTokenAsync(refreshToken);
+
+            if (user == null)
+            {
+                _logger.LogWarning("Refresh token validation failed - no token found");
+                return new AuthResultDto
+                {
+                    Success = false,
+                };
+            }
+
+            if (user.TokenExpires < DateTime.UtcNow)
+            {
+                _logger.LogWarning("Refresh token expired for user '{Username}'", user.Username);
+                return new AuthResultDto
+                {
+                    Success = false
+                };
+            }
+
+            // Issue new access token
+            var newAccessToken = CreateAccessToken(user);
+            var newRefreshToken = GenerateRefreshToken();
+
+            // Rotate the refresh token - invalidate old one, issue new one
+            user.RefreshToken = newRefreshToken.Token;
+            user.TokenExpires = newRefreshToken.Expires;
+            user.TokenCreated = DateTime.UtcNow;
+
+            await _userRepository.UpdateAsync(user);
+
+            _logger.LogInformation("Refresh token rotated for user '{Username}'", user.Username);
+
+            return new AuthResultDto
+            {
+                Success = true,
+                AccessToken = newAccessToken,
+                RefreshToken = newRefreshToken.Token,
+                Expiry = newRefreshToken.Expires
+            };
+        }
+
         public async Task<UserProfileDto?> GetProfileAsync(string username)
         {
             var user = await _userRepository.GetByUsernameAsync(username);
