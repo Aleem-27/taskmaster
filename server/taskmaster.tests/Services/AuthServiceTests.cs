@@ -145,6 +145,70 @@ namespace taskmaster.tests.Services
         }
 
         [Fact]
+        public async Task RefreshTokenAsync_ShouldReturnFailure_WhenTokenNotFound()
+        {
+            _mockUserRepo
+                .Setup(r => r.GetByRefreshTokenAsync(It.IsAny<string>()))
+                .ReturnsAsync((User?)null);
+
+            var result = await _sut.RefreshTokenAsync("invalid-token");
+
+            result.Success.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task RefreshTokenAsync_ShouldReturnFailure_WhenTokenIsExpired()
+        {
+            var user = new User
+            {
+                Username = "aleem",
+                RefreshToken = "expired-token",
+                TokenExpires = DateTime.UtcNow.AddDays(-1), // already expired
+                TokenCreated = DateTime.UtcNow.AddDays(-8)
+            };
+
+            _mockUserRepo.Setup(r => r.GetByRefreshTokenAsync("expired-token")).ReturnsAsync(user);
+
+            var result = await _sut.RefreshTokenAsync("expired-token");
+
+            result.Success.Should().BeFalse();
+            _mockUserRepo.Verify(r => r.UpdateAsync(It.IsAny<User>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task RefreshTokenAsync_ShouldReturnNewTokens_AndRotateRefreshToken_WhenTokenIsValid()
+        {
+            var user = new User
+            {
+                Id = 1,
+                Username = "aleem",
+                Role = "User",
+                RefreshToken = "valid-token",
+                TokenExpires = DateTime.UtcNow.AddDays(6),
+                TokenCreated = DateTime.UtcNow.AddDays(-1)
+            };
+
+            _mockUserRepo.Setup(r => r.GetByRefreshTokenAsync("valid-token")).ReturnsAsync(user);
+            _mockUserRepo.Setup(r => r.UpdateAsync(It.IsAny<User>())).Returns(Task.CompletedTask);
+
+            var result = await _sut.RefreshTokenAsync("valid-token");
+
+            result.Success.Should().BeTrue();
+            result.AccessToken.Should().NotBeNullOrEmpty();
+            result.RefreshToken.Should().NotBeNullOrEmpty();
+
+            // Confirm token was rotated — new refresh token must differ from old one
+            result.RefreshToken.Should().NotBe("valid-token");
+
+            // Confirm DB was updated with the new rotated token
+            _mockUserRepo.Verify(r => r.UpdateAsync(It.Is<User>(u =>
+                u.RefreshToken != "valid-token" &&
+                u.RefreshToken != null &&
+                u.TokenCreated != null
+            )), Times.Once);
+        }
+
+        [Fact]
         public async Task GetProfileAsync_ShouldReturnProfile_WhenUserExists()
         {
             var user = new User

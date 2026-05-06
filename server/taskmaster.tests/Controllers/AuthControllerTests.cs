@@ -157,6 +157,64 @@ namespace taskmaster.tests.Controllers
         }
 
         [Fact]
+        public async Task Refresh_ShouldReturn401_WhenNoCookiePresent()
+        {
+            // Default HttpContext has no cookies
+            var result = await _sut.Refresh();
+
+            result.Should().BeOfType<UnauthorizedObjectResult>()
+                .Which.StatusCode.Should().Be(401);
+        }
+
+        [Fact]
+        public async Task Refresh_ShouldReturn401_AndClearCookies_WhenTokenIsInvalid()
+        {
+            var context = new DefaultHttpContext();
+            context.Request.Headers["Cookie"] = "refreshToken=bad-token";
+            _sut.ControllerContext = new ControllerContext { HttpContext = context };
+
+            _mockAuthService
+                .Setup(s => s.RefreshTokenAsync("bad-token"))
+                .ReturnsAsync(new AuthResultDto { Success = false });
+
+            var result = await _sut.Refresh();
+
+            result.Should().BeOfType<UnauthorizedObjectResult>()
+                .Which.StatusCode.Should().Be(401);
+
+            var cookies = _sut.HttpContext.Response.Headers["Set-Cookie"].ToString();
+            cookies.Should().Contain("accessToken");
+            cookies.Should().Contain("refreshToken");
+        }
+
+        [Fact]
+        public async Task Refresh_ShouldReturn200_AndSetNewCookies_WhenTokenIsValid()
+        {
+            var context = new DefaultHttpContext();
+            context.Request.Headers["Cookie"] = "refreshToken=valid-token";
+            _sut.ControllerContext = new ControllerContext { HttpContext = context };
+
+            _mockAuthService
+                .Setup(s => s.RefreshTokenAsync("valid-token"))
+                .ReturnsAsync(new AuthResultDto
+                {
+                    Success = true,
+                    AccessToken = "new-access-token",
+                    RefreshToken = "new-refresh-token",
+                    Expiry = DateTime.UtcNow.AddDays(7)
+                });
+
+            var result = await _sut.Refresh();
+
+            result.Should().BeOfType<OkObjectResult>()
+                .Which.StatusCode.Should().Be(200);
+
+            var cookies = _sut.HttpContext.Response.Headers["Set-Cookie"].ToString();
+            cookies.Should().Contain("accessToken");
+            cookies.Should().Contain("refreshToken");
+        }
+
+        [Fact]
         public async Task GetMyProfile_ShouldReturn200_WhenUserIsAuthenticated()
         {
             SetAuthenticatedUser("aleem");
