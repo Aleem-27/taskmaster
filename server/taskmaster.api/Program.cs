@@ -8,6 +8,11 @@ using taskmaster.api.Repositories.Implementations;
 using taskmaster.api.Repositories.Interfaces;
 using taskmaster.api.Services.Implementations;
 using taskmaster.api.Services.Interfaces;
+using DotNetEnv;
+
+var envPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".env");
+Env.Load(envPath);
+var secret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new ApplicationException("JWT_SECRET is not configured");
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -40,7 +45,7 @@ try
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"]!)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
                 ValidateIssuer = false,
                 ValidateAudience = false
             };

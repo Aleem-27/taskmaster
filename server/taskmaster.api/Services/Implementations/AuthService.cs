@@ -12,13 +12,11 @@ namespace taskmaster.api.Services.Implementations
 {
     public class AuthService : IAuthService
     {
-        private readonly IConfiguration _config;
         private readonly IUserRepository _userRepository;
         private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IConfiguration config, IUserRepository userRepository, ILogger<AuthService> logger)
+        public AuthService(IUserRepository userRepository, ILogger<AuthService> logger)
         {
-            _config = config;
             _userRepository = userRepository;
             _logger = logger;
         }
@@ -164,7 +162,14 @@ namespace taskmaster.api.Services.Implementations
                 new Claim(ClaimTypes.Role, user.Role)
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["AppSettings:Token"]!));
+            var secret = Environment.GetEnvironmentVariable("JWT_SECRET");
+            if (string.IsNullOrWhiteSpace(secret))
+            {
+                throw new ApplicationException("JWT_SECRET is not configured");
+            }
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var token = new JwtSecurityToken(
