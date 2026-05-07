@@ -63,7 +63,7 @@ const TaskList = () => {
       <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left min-w-[600px]">
+          <table className="w-full text-left min-w-150">
 
             <thead className="bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-200 dark:border-zinc-800 dark:text-zinc-400">
               <tr>
