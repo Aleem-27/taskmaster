@@ -3,9 +3,9 @@ import { Plus } from 'lucide-react';
 
 import useTasks from '../hooks/useTasks';
 
-import TaskRow from '../components/tasks/TaskRow';
-import TaskFilters from '../components/tasks/TaskFilters';
-import TaskSkeletonRow from '../components/tasks/TaskSkeletonRow';
+import TaskRow from '../components/tasks/TaskListRow';
+import TaskFilters from '../components/tasks/TaskListFilters';
+import TaskSkeletonRow from '../components/tasks/TaskListSkeletonRow';
 
 const TaskList = () => {
   const {

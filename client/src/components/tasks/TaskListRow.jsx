@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { MoreHorizontal } from 'lucide-react';
-import { getPriorityStyle, getStatusIcon } from './TaskUtils';
+import { getPriorityStyle, getStatusIcon } from './TaskListUtils';
 
 const TaskRow = ({ task }) => {
   return (
