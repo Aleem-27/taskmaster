@@ -8,5 +8,6 @@
         public string? Priority { get; set; }
         public string? Status { get; set; }
         public DateTime DueDate { get; set; } 
+        public DateTime CreatedAt { get; set; }
     }
 }

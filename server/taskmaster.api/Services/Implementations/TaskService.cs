@@ -21,7 +21,8 @@ namespace taskmaster.api.Services.Implementations
                 Description = t.Description,
                 Priority = t.Priority,
                 Status = t.Status,
-                DueDate = t.DueDate
+                DueDate = t.DueDate,
+                CreatedAt = t.CreatedAt,
             });
         }
 
@@ -35,7 +36,8 @@ namespace taskmaster.api.Services.Implementations
                 Description = t.Description,
                 Priority = t.Priority,
                 Status = t.Status,
-                DueDate = t.DueDate
+                DueDate = t.DueDate,
+                CreatedAt = t.CreatedAt
             };
         }
 
@@ -49,7 +51,8 @@ namespace taskmaster.api.Services.Implementations
                 Description = t.Description,
                 Priority = t.Priority,
                 Status = t.Status,
-                DueDate = t.DueDate
+                DueDate = t.DueDate,
+                CreatedAt = t.CreatedAt
             });
         }
 
@@ -83,7 +86,8 @@ namespace taskmaster.api.Services.Implementations
                 Description = task.Description,
                 Priority = task.Priority,
                 Status = task.Status,
-                DueDate = task.DueDate
+                DueDate = task.DueDate,
+                CreatedAt = task.CreatedAt
             };
         }
 
