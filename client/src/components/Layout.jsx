@@ -22,7 +22,9 @@ const Layout = () => {
   return (
     <div className="flex h-screen bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300">
       {isOpen && (
-        <div
+        <button
+          type="button"
+          aria-label="Close sidebar overlay"
           className="fixed inset-0 bg-black/30 z-40 md:hidden"
           onClick={() => setIsOpen(false)}
         />
