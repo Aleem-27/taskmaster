@@ -37,8 +37,9 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Username</label>
+            <label htmlFor="username" className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Username</label>
             <input
+              id="username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -48,8 +49,9 @@ const Login = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Password</label>
+            <label htmlFor="password" className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Password</label>
             <input
+              id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

@@ -38,8 +38,9 @@ const Signup = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Full Name</label>
+            <label htmlFor="fullName" className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Full Name</label>
             <input
+              id="fullName"
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
@@ -49,8 +50,9 @@ const Signup = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Username</label>
+            <label htmlFor="username" className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Username</label>
             <input
+              id="username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -60,8 +62,9 @@ const Signup = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Password</label>
+            <label htmlFor="password" className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Password</label>
             <input
+              id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

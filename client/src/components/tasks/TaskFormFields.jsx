@@ -6,13 +6,13 @@ const TaskFormFields = ({
     <>
       {/* Title */}
       <div>
-        <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
+        <label htmlFor="title" className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
           Task Title
         </label>
 
         <input
+          id="title"
           type="text"
-          name="title"
           required
           placeholder="e.g., Complete Database Migration"
           value={formData.title}
@@ -23,13 +23,13 @@ const TaskFormFields = ({
 
       {/* Description */}
       <div>
-        <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
+        <label htmlFor="description" className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
           Description
         </label>
 
         <textarea
+          id="description"
           rows="4"
-          name="description"
           placeholder="Describe the task details..."
           value={formData.description}
           onChange={handleChange}
@@ -41,12 +41,12 @@ const TaskFormFields = ({
 
         {/* Priority */}
         <div>
-          <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
+          <label htmlFor="priority" className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
             Priority
           </label>
 
           <select
-            name="priority"
+            id="priority"
             value={formData.priority}
             onChange={handleChange}
             className="w-full px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-emerald-500 outline-none cursor-pointer transition-colors duration-300"
@@ -59,13 +59,13 @@ const TaskFormFields = ({
 
         {/* Due Date */}
         <div>
-          <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
+          <label htmlFor="dueDate" className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
             Due Date
           </label>
 
           <input
+            id="dueDate"
             type="date"
-            name="dueDate"
             required
             value={formData.dueDate}
             onChange={handleChange}
