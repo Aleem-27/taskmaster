@@ -29,11 +29,11 @@ apiClient.interceptors.response.use(
       } catch {
         // Refresh failed - session is dead, redirect to login
         window.location.href = '/login';
-        return Promise.reject(error);
+        throw error;
       }
     }
 
-    return Promise.reject(error);
+    throw error;
   }
 );
 
