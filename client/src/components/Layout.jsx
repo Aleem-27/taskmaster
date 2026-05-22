@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { LayoutDashboard, ClipboardList, User, LogOut, CheckCircle, Menu, X } from 'lucide-react';
+import { LayoutDashboard, ClipboardList, User, LogOut, CheckCircle, Menu, X, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 import useAuth from '../hooks/useAuth';
 import { useAuthContext } from '../context/AuthContext';
@@ -90,6 +90,22 @@ const Layout = () => {
           >
             <User size={20} /> Profile
           </NavLink>
+          
+          {user?.role === 'Admin' && (
+            <NavLink
+              to="/admin"
+              onClick={() => setIsOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 p-3 rounded-lg transition-colors duration-300
+      ${isActive
+                  ? 'bg-emerald-100 text-emerald-600 font-medium dark:bg-emerald-900/30 dark:text-emerald-400'
+                  : 'text-zinc-700 dark:text-zinc-300 hover:bg-emerald-50 dark:hover:bg-zinc-800 hover:text-emerald-600'
+                }`
+              }
+            >
+              <ShieldCheck size={20} /> Admin
+            </NavLink>
+          )}
         </nav>
 
         <div className="p-4 border-t border-zinc-300 dark:border-zinc-800 transition-colors duration-300">

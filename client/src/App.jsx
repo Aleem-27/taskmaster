@@ -3,9 +3,11 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import TaskList from './pages/TaskList';
 import TaskForm from './pages/TaskForm';
 import Profile from './pages/Profile';
@@ -41,6 +43,11 @@ function App() {
             <Route path="/tasks/new" element={<TaskForm />} />
             <Route path="/tasks/:id" element={<TaskDetail />} />
             <Route path="/profile" element={<Profile />} />
+
+            {/* Admin Routes */}
+            <Route element={<AdminRoute />}>
+              <Route path="/admin" element={<AdminDashboard />} />
+            </Route>
           </Route>
         </Route>
       </Routes>

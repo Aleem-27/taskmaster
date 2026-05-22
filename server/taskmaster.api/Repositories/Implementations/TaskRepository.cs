@@ -70,7 +70,7 @@ namespace taskmaster.api.Repositories.Implementations
         public async Task UpdateAsync(TaskItem task, int userId)
         {
             var t = await GetByIdAndUserIdAsync(task.Id, userId);
-            if (task != null)
+            if (t != null)
             {
                 _context.Tasks.Update(task);
                 await _context.SaveChangesAsync();

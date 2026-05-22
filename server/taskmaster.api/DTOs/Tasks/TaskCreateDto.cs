@@ -2,9 +2,9 @@
 {
     public class TaskCreateDto
     {
-        public string? Title { get; set; }
-        public string? Description { get; set; }
+        public required string Title { get; set; }
+        public required string Description { get; set; }
         public string Priority { get; set; } = "Medium";
-        public DateTime DueDate { get; set; }
+        public DateTime DueDate { get; set; } = DateTime.UtcNow.AddDays(1);
     }
 }

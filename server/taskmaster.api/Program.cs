@@ -12,8 +12,7 @@ using DotNetEnv;
 
 var envPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".env");
 Env.Load(envPath);
-var secret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new ApplicationException("JWT_SECRET is not configured");
-
+var secret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new InvalidOperationException("JWT_SECRET is not configured in environment variables.");
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateBootstrapLogger();
@@ -94,7 +93,8 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
-    app.Run();
+
+    await app.RunAsync();
 }
 catch (Exception ex)
 {
@@ -102,5 +102,5 @@ catch (Exception ex)
 }
 finally
 {
-    Log.CloseAndFlush();
+    await Log.CloseAndFlushAsync();
 }

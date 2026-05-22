@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using taskmaster.api.DTOs.Auth;
 using taskmaster.api.DTOs.Users;
 using taskmaster.api.Models;
 using taskmaster.api.Repositories.Interfaces;
@@ -165,7 +166,7 @@ namespace taskmaster.api.Services.Implementations
             var secret = Environment.GetEnvironmentVariable("JWT_SECRET");
             if (string.IsNullOrWhiteSpace(secret))
             {
-                throw new ApplicationException("JWT_SECRET is not configured");
+                throw new InvalidOperationException("JWT_SECRET is not configured in environment variables.");
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));

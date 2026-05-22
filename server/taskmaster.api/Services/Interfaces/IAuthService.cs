@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using taskmaster.api.DTOs.Auth;
 using taskmaster.api.DTOs.Users;
 using taskmaster.api.Models;
 
