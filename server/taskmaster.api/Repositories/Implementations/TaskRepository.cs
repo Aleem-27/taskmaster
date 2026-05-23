@@ -80,21 +80,27 @@ namespace taskmaster.api.Repositories.Implementations
         public async Task DeleteAsync(int id, int userId)
         {
             var task = await GetByIdAndUserIdAsync(id, userId);
-            if (task != null)
+            if (task == null)
             {
-                _context.Tasks.Remove(task);
-                await _context.SaveChangesAsync();
+                return;
             }
+
+            task.IsDeleted = true;
+            task.DeletedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
         {
             var task = await _context.Tasks.FindAsync(id);
-            if (task != null)
+            if (task == null)
             {
-                _context.Tasks.Remove(task);
-                await _context.SaveChangesAsync();
+                return;
             }
+
+            task.IsDeleted = true;
+            task.DeletedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
         }
     }
 }

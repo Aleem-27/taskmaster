@@ -52,7 +52,17 @@ namespace taskmaster.api.Repositories.Implementations
                 return;
             }
 
-            _context.Users.Remove(user);
+            user.IsDeleted = true;
+            user.DeletedAt = DateTime.UtcNow;
+
+            var userTasks = await _context.Tasks.Where(t => t.UserId == id).ToListAsync();
+
+            foreach (var task in userTasks)
+            {
+                task.IsDeleted = true;
+                task.DeletedAt = DateTime.UtcNow;
+            }
+
             await _context.SaveChangesAsync();
         }
     }
