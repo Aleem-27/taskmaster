@@ -8,6 +8,15 @@ const useAdmin = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [taskFilters, setTaskFilters] = useState({
+    status: '',
+    priority: '',
+  });
+
+  const [userFilters, setUserFilters] = useState({
+    role: '',
+  });
+
   const fetchAll = async () => {
     setLoading(true);
     setError(null);
@@ -34,9 +43,7 @@ const useAdmin = () => {
 
   const updateUserRole = async (id, role) => {
     await adminService.updateUserRole(id, role);
-    setUsers((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, role } : u))
-    );
+    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, role } : u)));
   };
 
   const deleteTask = async (id) => {
@@ -44,14 +51,34 @@ const useAdmin = () => {
     setTasks((prev) => prev.filter((t) => t.id !== id));
   };
 
+  // Client-side filtering — no extra API calls needed
+  const filteredTasks = tasks.filter((t) => {
+    const statusMatch = !taskFilters.status || t.status === taskFilters.status;
+    const priorityMatch = !taskFilters.priority || t.priority === taskFilters.priority;
+    return statusMatch && priorityMatch;
+  });
+
+  const filteredUsers = users.filter((u) => {
+    return !userFilters.role || u.role === userFilters.role;
+  });
+
   useEffect(() => {
     fetchAll();
   }, []);
 
   return {
-    users, tasks, stats,
-    loading, error,
-    deleteUser, updateUserRole, deleteTask,
+    users: filteredUsers,
+    tasks: filteredTasks,
+    stats,
+    loading,
+    error,
+    taskFilters,
+    setTaskFilters,
+    userFilters,
+    setUserFilters,
+    deleteUser,
+    updateUserRole,
+    deleteTask,
   };
 };
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Trash2, ShieldCheck, ShieldOff, Users, ClipboardList, RefreshCw } from 'lucide-react';
+import { Trash2, ShieldCheck, ShieldOff, Users, ClipboardList, Filter } from 'lucide-react';
 import useAdmin from '../hooks/useAdmin';
 
 const StatCard = ({ title, count, colorClass }) => (
@@ -22,6 +22,7 @@ const SkeletonRow = () => (
     <td className="px-4 py-3"><div className="h-4 w-24 bg-zinc-200 dark:bg-zinc-700 rounded" /></td>
     <td className="px-4 py-3"><div className="h-4 w-16 bg-zinc-200 dark:bg-zinc-700 rounded" /></td>
     <td className="px-4 py-3"><div className="h-4 w-20 bg-zinc-200 dark:bg-zinc-700 rounded" /></td>
+    <td className="px-4 py-3"><div className="h-4 w-16 bg-zinc-200 dark:bg-zinc-700 rounded" /></td>
   </tr>
 );
 
@@ -47,9 +48,29 @@ const ConfirmModal = ({ message, onConfirm, onCancel }) => (
   </div>
 );
 
+const FilterSelect = ({ value, onChange, options, placeholder }) => (
+  <select
+    value={value}
+    onChange={(e) => onChange(e.target.value)}
+    className="text-sm px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors"
+  >
+    <option value="">{placeholder}</option>
+    {options.map((opt) => (
+      <option key={opt} value={opt}>{opt}</option>
+    ))}
+  </select>
+);
+
 const AdminDashboard = () => {
-  const { users, tasks, stats, loading, error, deleteUser, updateUserRole, deleteTask } = useAdmin();
-  const [confirm, setConfirm] = useState(null); // { type: 'user'|'task', id, message }
+  const {
+    users, tasks, stats,
+    loading, error,
+    taskFilters, setTaskFilters,
+    userFilters, setUserFilters,
+    deleteUser, updateUserRole, deleteTask,
+  } = useAdmin();
+
+  const [confirm, setConfirm] = useState(null);
   const [actionError, setActionError] = useState(null);
 
   const handleConfirm = async () => {
@@ -76,16 +97,6 @@ const AdminDashboard = () => {
       setConfirm(null);
     }
   };
-  
-  const handleRoleToggle = async (user) => {
-    const newRole = user.role === 'Admin' ? 'User' : 'Admin';
-    setActionError(null);
-    try {
-      await updateUserRole(user.id, newRole);
-    } catch {
-      setActionError('Failed to update role. Please try again.');
-    }
-  };
 
   return (
     <div className="space-y-8">
@@ -96,7 +107,6 @@ const AdminDashboard = () => {
         <h2 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100">Admin Dashboard</h2>
       </div>
 
-      {/* Errors */}
       {(error || actionError) && (
         <div className="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm">
           {error || actionError}
@@ -123,9 +133,21 @@ const AdminDashboard = () => {
 
       {/* Users Table */}
       <section>
-        <h3 className="text-lg font-semibold text-zinc-700 dark:text-zinc-300 mb-4 flex items-center gap-2">
-          <Users size={18} /> All Users
-        </h3>
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <h3 className="text-lg font-semibold text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
+            <Users size={18} /> All Users
+          </h3>
+          <div className="flex items-center gap-2">
+            <Filter size={16} className="text-zinc-400" />
+            <FilterSelect
+              value={userFilters.role}
+              onChange={(val) => setUserFilters({ role: val })}
+              options={['Admin', 'User']}
+              placeholder="All Roles"
+            />
+          </div>
+        </div>
+
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -188,13 +210,31 @@ const AdminDashboard = () => {
             </table>
           </div>
         </div>
-      </section >
+      </section>
 
       {/* Tasks Table */}
-      < section >
-        <h3 className="text-lg font-semibold text-zinc-700 dark:text-zinc-300 mb-4 flex items-center gap-2">
-          <ClipboardList size={18} /> All Tasks
-        </h3>
+      <section>
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <h3 className="text-lg font-semibold text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
+            <ClipboardList size={18} /> All Tasks
+          </h3>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Filter size={16} className="text-zinc-400" />
+            <FilterSelect
+              value={taskFilters.status}
+              onChange={(val) => setTaskFilters((prev) => ({ ...prev, status: val }))}
+              options={['Pending', 'In Progress', 'Completed']}
+              placeholder="All Statuses"
+            />
+            <FilterSelect
+              value={taskFilters.priority}
+              onChange={(val) => setTaskFilters((prev) => ({ ...prev, priority: val }))}
+              options={['Low', 'Medium', 'High']}
+              placeholder="All Priorities"
+            />
+          </div>
+        </div>
+
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -213,7 +253,7 @@ const AdminDashboard = () => {
                 ) : tasks.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-4 py-6 text-center text-zinc-400 dark:text-zinc-500">
-                      No tasks found
+                      No tasks match the selected filters
                     </td>
                   </tr>
                 ) : (
@@ -256,17 +296,14 @@ const AdminDashboard = () => {
         </div>
       </section>
 
-      {/* Confirm Modal */}
-      {
-        confirm && (
-          <ConfirmModal
-            message={confirm.message}
-            onConfirm={handleConfirm}
-            onCancel={() => setConfirm(null)}
-          />
-        )
-      }
-    </div >
+      {confirm && (
+        <ConfirmModal
+          message={confirm.message}
+          onConfirm={handleConfirm}
+          onCancel={() => setConfirm(null)}
+        />
+      )}
+    </div>
   );
 };
 
