@@ -23,6 +23,7 @@ const SkeletonRow = () => (
     <td className="px-4 py-3"><div className="h-4 w-16 bg-zinc-200 dark:bg-zinc-700 rounded" /></td>
     <td className="px-4 py-3"><div className="h-4 w-20 bg-zinc-200 dark:bg-zinc-700 rounded" /></td>
     <td className="px-4 py-3"><div className="h-4 w-16 bg-zinc-200 dark:bg-zinc-700 rounded" /></td>
+    <td className="px-4 py-3"><div className="h-4 w-16 bg-zinc-200 dark:bg-zinc-700 rounded" /></td>
   </tr>
 );
 
@@ -165,7 +166,7 @@ const AdminDashboard = () => {
                   <><SkeletonRow /><SkeletonRow /><SkeletonRow /></>
                 ) : users.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-6 text-center text-zinc-400 dark:text-zinc-500">
+                    <td colSpan={6} className="px-4 py-6 text-center text-zinc-400 dark:text-zinc-500">
                       No users found
                     </td>
                   </tr>
@@ -244,6 +245,7 @@ const AdminDashboard = () => {
                   <th className="px-4 py-3 text-left">Priority</th>
                   <th className="px-4 py-3 text-left">Status</th>
                   <th className="px-4 py-3 text-left">Due Date</th>
+                  <th className="px-4 py-3 text-left">Owner</th>
                   <th className="px-4 py-3 text-left">Actions</th>
                 </tr>
               </thead>
@@ -252,7 +254,7 @@ const AdminDashboard = () => {
                   <><SkeletonRow /><SkeletonRow /><SkeletonRow /></>
                 ) : tasks.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-6 text-center text-zinc-400 dark:text-zinc-500">
+                    <td colSpan={6} className="px-4 py-6 text-center text-zinc-400 dark:text-zinc-500">
                       No tasks match the selected filters
                     </td>
                   </tr>
@@ -278,6 +280,9 @@ const AdminDashboard = () => {
                       </td>
                       <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400">
                         {new Date(task.dueDate).toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400">
+                        {task.ownerUsername ?? '—'}
                       </td>
                       <td className="px-4 py-3">
                         <button

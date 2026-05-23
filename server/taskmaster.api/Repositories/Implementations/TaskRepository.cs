@@ -17,7 +17,7 @@ namespace taskmaster.api.Repositories.Implementations
 
         public async Task<IEnumerable<TaskItem>> GetAllAsync()
         {
-            return await _context.Tasks.ToListAsync();
+            return await _context.Tasks.Include(t => t.User).ToListAsync();
         }
 
         public async Task<TaskItem?> GetByIdAndUserIdAsync(int id, int userId)

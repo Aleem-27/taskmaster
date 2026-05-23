@@ -23,6 +23,8 @@ namespace taskmaster.api.Services.Implementations
                 Status = t.Status,
                 DueDate = t.DueDate,
                 CreatedAt = t.CreatedAt,
+                UserId = t.UserId,
+                OwnerUsername = t.User?.Username
             });
         }
 
