@@ -41,6 +41,7 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="/tasks" element={<TaskList />} />
             <Route path="/tasks/new" element={<TaskForm />} />
+            <Route path="/tasks/edit/:id" element={<TaskForm />} />
             <Route path="/tasks/:id" element={<TaskDetail />} />
             <Route path="/profile" element={<Profile />} />
 

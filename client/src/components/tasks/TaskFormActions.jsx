@@ -1,12 +1,8 @@
 import { Save } from 'lucide-react';
 
-const TaskFormActions = ({
-  loading,
-  onCancel,
-}) => {
+const TaskFormActions = ({ loading, isEditMode, onCancel }) => {
   return (
     <div className="flex items-center justify-end gap-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
-
       <button
         type="button"
         onClick={onCancel}
@@ -14,17 +10,14 @@ const TaskFormActions = ({
       >
         Cancel
       </button>
-
       <button
         type="submit"
         disabled={loading}
         className="flex items-center gap-2 px-8 py-2.5 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 disabled:opacity-60 transition-all shadow-lg shadow-emerald-100 dark:shadow-none cursor-pointer"
       >
         <Save size={18} />
-
-        {loading ? 'Saving...' : 'Save Task'}
+        {loading ? 'Saving...' : isEditMode ? 'Update Task' : 'Save Task'}
       </button>
-
     </div>
   );
 };
