@@ -85,7 +85,7 @@ namespace taskmaster.tests.Controllers
         [Fact]
         public async Task CreateMyTask_ShouldReturn201_WithCreatedTask()
         {
-            var createDto = new TaskCreateDto { Title = "New Task", Priority = "High", DueDate = DateTime.UtcNow };
+            var createDto = new TaskCreateDto { Title = "New Task", Description = "Test Description",  Priority = "High", DueDate = DateTime.UtcNow };
             _mockTaskService.Setup(s => s.CreateTaskAsync(createDto, 1))
                 .ReturnsAsync(new TaskReadDto { Id = 5, Title = "New Task" });
 
@@ -103,7 +103,14 @@ namespace taskmaster.tests.Controllers
             _mockTaskService.Setup(s => s.UpdateTaskAsync(1, It.IsAny<TaskUpdateDto>(), 1))
                 .Returns(Task.CompletedTask);
 
-            var result = await _sut.UpdateMyTask(1, new TaskUpdateDto());
+            var result = await _sut.UpdateMyTask(1, new TaskUpdateDto
+            {
+                Title = "Test Title",
+                Description = "Test Description",
+                Priority = "Medium",
+                Status = "Pending",
+                DueDate = DateTime.UtcNow
+            });
 
             result.Should().BeOfType<NoContentResult>();
         }
@@ -114,7 +121,14 @@ namespace taskmaster.tests.Controllers
             _mockTaskService.Setup(s => s.GetTaskByIdAndUserIdAsync(99, 1))
                 .ReturnsAsync((TaskReadDto?)null);
 
-            var result = await _sut.UpdateMyTask(99, new TaskUpdateDto());
+            var result = await _sut.UpdateMyTask(99, new TaskUpdateDto
+            {
+                Title = "Test Title",
+                Description = "Test Description",
+                Priority = "Medium",
+                Status = "Pending",
+                DueDate = DateTime.UtcNow
+            });
 
             result.Should().BeOfType<NotFoundResult>();
         }

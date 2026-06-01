@@ -12,7 +12,6 @@ namespace taskmaster.tests.Services
     public class AuthServiceTests
     {
         private readonly Mock<IUserRepository> _mockUserRepo;
-        private readonly Mock<IConfiguration> _mockConfig;
         private readonly Mock<ILogger<AuthService>> _mockLogger;
         private readonly IAuthService _sut;
 
@@ -20,14 +19,15 @@ namespace taskmaster.tests.Services
 
         public AuthServiceTests()
         {
+            Environment.SetEnvironmentVariable(
+                "JWT_SECRET",
+                TestToken
+            );
+
             _mockUserRepo = new Mock<IUserRepository>();
-            _mockConfig = new Mock<IConfiguration>();
             _mockLogger = new Mock<ILogger<AuthService>>();
 
-            _mockConfig.Setup(c => c["AppSettings:Token"])
-                       .Returns(TestToken);
-
-            _sut = new AuthService(_mockConfig.Object , _mockUserRepo.Object, _mockLogger.Object);
+            _sut = new AuthService(_mockUserRepo.Object, _mockLogger.Object);
         }
 
         [Fact]

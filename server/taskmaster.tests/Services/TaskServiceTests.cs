@@ -99,7 +99,7 @@ namespace taskmaster.tests.Services
                 .Callback<TaskItem>(t => t.Id = 10)
                 .Returns(Task.CompletedTask);
 
-            var dto = new TaskCreateDto { Title = "New Task", Priority = "High", DueDate = DateTime.UtcNow };
+            var dto = new TaskCreateDto { Title = "New Task", Description = "Test Description", Priority = "High", DueDate = DateTime.UtcNow };
 
             var result = await _sut.CreateTaskAsync(dto, userId: 1);
 
@@ -117,7 +117,7 @@ namespace taskmaster.tests.Services
             _mockRepo.Setup(r => r.GetByIdAndUserIdAsync(1, 1)).ReturnsAsync(existing);
             _mockRepo.Setup(r => r.UpdateAsync(It.IsAny<TaskItem>(), 1)).Returns(Task.CompletedTask);
 
-            var updateDto = new TaskUpdateDto { Title = "Updated", Priority = "High", Status = "Completed", DueDate = DateTime.UtcNow };
+            var updateDto = new TaskUpdateDto { Title = "Updated", Description = "Test Description", Priority = "High", Status = "Completed", DueDate = DateTime.UtcNow };
             await _sut.UpdateTaskAsync(1, updateDto, userId: 1);
 
             _mockRepo.Verify(r => r.UpdateAsync(It.Is<TaskItem>(t =>
@@ -132,7 +132,14 @@ namespace taskmaster.tests.Services
         {
             _mockRepo.Setup(r => r.GetByIdAndUserIdAsync(1, 99)).ReturnsAsync((TaskItem?)null);
 
-            await _sut.UpdateTaskAsync(1, new TaskUpdateDto(), userId: 99);
+            await _sut.UpdateTaskAsync(1, new TaskUpdateDto
+            {
+                Title = "",
+                Description = "",
+                Priority = "",
+                Status = "",
+                DueDate = DateTime.UtcNow
+            }, userId: 99);
 
             _mockRepo.Verify(r => r.UpdateAsync(It.IsAny<TaskItem>(), It.IsAny<int>()), Times.Never);
         }
