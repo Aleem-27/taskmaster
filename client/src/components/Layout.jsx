@@ -18,6 +18,15 @@ const Layout = () => {
       .toUpperCase()
       .slice(0, 2);
   };
+  const handleLogout = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to sign out?"
+    );
+
+    if (confirmed) {
+      logout();
+    }
+  };
 
   return (
     <div className="flex h-screen bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300">
@@ -110,7 +119,7 @@ const Layout = () => {
 
         <div className="p-4 border-t border-zinc-300 dark:border-zinc-800 transition-colors duration-300">
           <button
-            onClick={logout}
+            onClick={handleLogout}
             disabled={loading}
             className="cursor-pointer flex items-center gap-3 w-full p-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-60"
           >

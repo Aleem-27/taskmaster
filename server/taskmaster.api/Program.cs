@@ -10,9 +10,6 @@ using taskmaster.api.Services.Implementations;
 using taskmaster.api.Services.Interfaces;
 using DotNetEnv;
 
-var envPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".env");
-Env.Load(envPath);
-var secret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new InvalidOperationException("JWT_SECRET is not configured in environment variables.");
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateBootstrapLogger();
@@ -27,6 +24,18 @@ try
         config.ReadFrom.Configuration(context.Configuration)
             .ReadFrom.Services(services)
             .Enrich.FromLogContext());
+
+    if (builder.Environment.IsDevelopment())
+    {
+        var envPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".env");
+
+        if (File.Exists(envPath))
+        {
+            Env.Load(envPath);
+        }
+    }
+    
+    var secret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? builder.Configuration["JWT_SECRET"] ?? throw new InvalidOperationException("JWT_SECRET is not configured in environment variables.");
 
     // Add services to the container.
     builder.Services.AddControllers();
@@ -93,6 +102,12 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        db.Database.Migrate();
+    }
 
     await app.RunAsync();
 }
